@@ -8,21 +8,7 @@
 </head>
 <body class="admin">
   <main class="app-shell">
-    <section id="pinScreen" class="pin-screen">
-      <div class="card pin-card">
-        <p class="eyebrow dark">Beveiligd</p>
-        <h1 class="pin-title">Beheer</h1>
-        <p class="muted">Voer de beheerpincode in om routes aan te passen.</p>
-
-        <label for="pinInput">Pincode</label>
-        <input id="pinInput" type="password" inputmode="numeric" autocomplete="off" placeholder="Voer pincode in">
-        <button id="pinBtn" class="primary">Ontgrendel beheer</button>
-        <p id="pinStatus" class="status"></p>
-        <a href="index.html" class="ghost-link">Terug naar deelnemerspagina</a>
-      </div>
-    </section>
-
-    <div id="adminContent" class="hidden">
+    
     <header class="hero admin-hero">
       <div>
         <p class="eyebrow">Leiding</p>
@@ -69,6 +55,14 @@
       <p id="saveStatus" class="status"></p>
     </section>
 
+
+    <section class="card">
+      <h2>GPS-test</h2>
+      <p class="muted">Gebruik dit om te controleren of de ingevulde coördinaten en de afstandsberekening logisch zijn. Dit is alleen zichtbaar op de beheerpagina.</p>
+      <button id="testDistanceBtn" class="secondary">Test afstand vanaf mijn huidige locatie</button>
+      <p id="testDistanceResult" class="status"></p>
+    </section>
+
     <section class="card">
       <h2>Import / export</h2>
       <p class="muted">Gebruik dit als backup of om dezelfde routes op een ander toestel te zetten.</p>
@@ -78,8 +72,7 @@
       </div>
       <textarea id="jsonBox" rows="10" placeholder="Route-data verschijnt hier, of plak hier data om te importeren."></textarea>
     </section>
-    </div>
-  </main>
+    </main>
 
   <script src="data.js"></script>
   <script src="admin.js"></script>

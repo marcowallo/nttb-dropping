@@ -66,3 +66,18 @@ Let op: sommige telefoons blokkeren geluid totdat de gebruiker eerst op de pagin
 
 Kleine wijziging v4.1:
 - Het voorbeeld in het pincodeveld is verwijderd.
+
+
+Update v4.2:
+- Pincode op de beheerpagina verwijderd.
+
+
+## Update v4.3
+
+- Offline service worker registratie verwijderd, zodat GitHub-wijzigingen sneller zichtbaar worden.
+- Resetfunctie toegevoegd: open `index.html?reset=1` om lokale appdata te wissen en opnieuw uit `data.js` te laden.
+- GPS-test toegevoegd op de beheerpagina. Daarmee kun je zien:
+  - jouw huidige GPS-locatie;
+  - checkpoint 1 van de geselecteerde groep;
+  - berekende afstand;
+  - GPS-nauwkeurigheid.

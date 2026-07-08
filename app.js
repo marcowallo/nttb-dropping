@@ -78,6 +78,13 @@ function populateGroups() {
 }
 
 function init() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.has("reset")) {
+    localStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STATE_KEY);
+    appData = normalizeData(DEFAULT_DATA);
+  }
+
   saveData();
   populateGroups();
 
@@ -87,7 +94,6 @@ function init() {
     activeCheckpointIndex = state.checkpointIndex || 0;
     showRoute();
   }
-
 }
 
 function currentGroup() {
@@ -247,7 +253,7 @@ function updateDistanceDisplay() {
 
   els.distanceText.textContent = formatDistance(distance);
   els.updateText.textContent = `Laatst bijgewerkt om ${new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}`;
-  els.locationText.textContent = `Jouw locatie is beschikbaar. Doelcoördinaten en richting blijven verborgen.`;
+  els.locationText.textContent = `Jouw locatie is beschikbaar. Doelcoördinaten en richting blijven verborgen. Locatie-nauwkeurigheid: ongeveer ${Math.round(lastPosition.coords.accuracy || 0)} meter.`;
   els.progressBar.style.width = `${(activeCheckpointIndex / group.checkpoints.length) * 100}%`;
 
   const radius = Number(appData.settings.radiusMeters || 50);

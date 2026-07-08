@@ -1,37 +1,5 @@
 const STORAGE_KEY = "droppingDataV3";
 
-const ADMIN_PIN = "2026";
-const PIN_SESSION_KEY = "droppingAdminUnlockedV4";
-
-const pinScreen = document.getElementById("pinScreen");
-const adminContent = document.getElementById("adminContent");
-const pinInput = document.getElementById("pinInput");
-const pinBtn = document.getElementById("pinBtn");
-const pinStatus = document.getElementById("pinStatus");
-
-function unlockAdmin() {
-  pinScreen.classList.add("hidden");
-  adminContent.classList.remove("hidden");
-  sessionStorage.setItem(PIN_SESSION_KEY, "true");
-}
-
-function checkPin() {
-  if (pinInput.value === ADMIN_PIN) {
-    unlockAdmin();
-  } else {
-    pinStatus.textContent = "Onjuiste pincode.";
-    pinInput.value = "";
-  }
-}
-
-pinBtn.addEventListener("click", checkPin);
-pinInput.addEventListener("keydown", event => {
-  if (event.key === "Enter") checkPin();
-});
-
-if (sessionStorage.getItem(PIN_SESSION_KEY) === "true") {
-  unlockAdmin();
-}
 
 
 let appData = normalizeData(loadData());
@@ -49,7 +17,9 @@ const els = {
   saveStatus: document.getElementById("saveStatus"),
   exportBtn: document.getElementById("exportBtn"),
   importBtn: document.getElementById("importBtn"),
-  jsonBox: document.getElementById("jsonBox")
+  jsonBox: document.getElementById("jsonBox"),
+  testDistanceBtn: document.getElementById("testDistanceBtn"),
+  testDistanceResult: document.getElementById("testDistanceResult")
 };
 
 function loadData() {
@@ -263,5 +233,74 @@ els.importBtn.addEventListener("click", () => {
     flash("Import mislukt. Controleer de data.");
   }
 });
+
+
+function distanceMeters(lat1, lon1, lat2, lon2) {
+  const R = 6371000;
+  const toRad = deg => deg * Math.PI / 180;
+  const dLat = toRad(lat2 - lat1);
+  const dLon = toRad(lon2 - lon1);
+  const a =
+    Math.sin(dLat / 2) ** 2 +
+    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) *
+    Math.sin(dLon / 2) ** 2;
+
+  return 2 * R * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+}
+
+function formatDistance(meters) {
+  if (!Number.isFinite(meters)) return "Onbekend";
+  if (meters >= 1000) return `${(meters / 1000).toFixed(2)} km`;
+  return `${Math.round(meters)} m`;
+}
+
+function testDistanceFromCurrentLocation() {
+  readEditor();
+  saveData();
+
+  const group = appData.groups[selectedGroupIndex];
+  const cp = group?.checkpoints?.[0];
+
+  if (!cp || !Number.isFinite(cp.lat) || !Number.isFinite(cp.lng)) {
+    els.testDistanceResult.textContent = "Checkpoint 1 heeft geen geldige coördinaten.";
+    return;
+  }
+
+  if (!navigator.geolocation) {
+    els.testDistanceResult.textContent = "GPS wordt niet ondersteund door deze browser.";
+    return;
+  }
+
+  els.testDistanceResult.textContent = "GPS-locatie zoeken...";
+
+  navigator.geolocation.getCurrentPosition(
+    position => {
+      const userLat = position.coords.latitude;
+      const userLng = position.coords.longitude;
+      const distance = distanceMeters(userLat, userLng, cp.lat, cp.lng);
+      const accuracy = Math.round(position.coords.accuracy || 0);
+
+      els.testDistanceResult.textContent =
+        `Afstand tot checkpoint 1 van ${group.name}: ${formatDistance(distance)}. ` +
+        `GPS-nauwkeurigheid: ±${accuracy} m. ` +
+        `Jouw locatie: ${userLat.toFixed(6)}, ${userLng.toFixed(6)}. ` +
+        `Checkpoint: ${Number(cp.lat).toFixed(6)}, ${Number(cp.lng).toFixed(6)}.`;
+    },
+    error => {
+      const messages = {
+        1: "GPS-toegang geweigerd.",
+        2: "Locatie niet beschikbaar.",
+        3: "GPS zoeken duurde te lang."
+      };
+      els.testDistanceResult.textContent = messages[error.code] || "Onbekende GPS-fout.";
+    },
+    { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 }
+  );
+}
+
+if (els.testDistanceBtn) {
+  els.testDistanceBtn.addEventListener("click", testDistanceFromCurrentLocation);
+}
+
 
 render();

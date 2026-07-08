@@ -1,22 +1,15 @@
-const CACHE_NAME = "dropping-v4-cache";
-const FILES = [
-  "./",
-  "./index.html",
-  "./admin.html",
-  "./styles.css",
-  "./data.js",
-  "./app.js",
-  "./admin.js",
-  "./manifest.json",
-  "./icon.svg"
-];
-
+// v4.3: offline cache uitgeschakeld.
+// Als een oudere service worker nog actief was, ruimt deze zichzelf op.
 self.addEventListener("install", event => {
-  event.waitUntil(caches.open(CACHE_NAME).then(cache => cache.addAll(FILES)));
+  self.skipWaiting();
 });
 
-self.addEventListener("fetch", event => {
-  event.respondWith(
-    caches.match(event.request).then(cached => cached || fetch(event.request))
+self.addEventListener("activate", event => {
+  event.waitUntil(
+    caches.keys()
+      .then(keys => Promise.all(keys.map(key => caches.delete(key))))
+      .then(() => self.registration.unregister())
+      .then(() => self.clients.matchAll())
+      .then(clients => clients.forEach(client => client.navigate(client.url)))
   );
 });
