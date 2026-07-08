@@ -2,6 +2,7 @@ const STORAGE_KEY = "droppingDataV3";
 const STATE_KEY = "droppingStateV3";
 
 let appData = normalizeData(loadData());
+let unsubscribeRemoteData = null;
 let activeGroupIndex = null;
 let activeCheckpointIndex = 0;
 let lastPosition = null;
@@ -125,6 +126,30 @@ function renderPongProgress() {
     dot.textContent = index === group.checkpoints.length - 1 ? "🏁" : "🏓";
     els.pongProgress.appendChild(dot);
   });
+}
+
+
+function uploadGroupStatus(extra = {}) {
+  if (!window.DroppingSync || !window.DroppingSync.enabled || activeGroupIndex === null) return;
+  const group = currentGroup();
+  const checkpoint = currentCheckpoint();
+  if (!group) return;
+
+  const payload = {
+    activeCheckpointIndex,
+    activeCheckpointName: checkpoint ? checkpoint.name : "Route voltooid",
+    distanceText: els.distanceText ? els.distanceText.textContent : "",
+    progress: checkpoint ? "active" : "completed",
+    ...extra
+  };
+
+  if (lastPosition) {
+    payload.lat = lastPosition.coords.latitude;
+    payload.lng = lastPosition.coords.longitude;
+    payload.accuracy = Math.round(lastPosition.coords.accuracy || 0);
+  }
+
+  window.DroppingSync.updateGroupStatus(group.name, payload).catch(() => {});
 }
 
 function showRoute() {
@@ -321,6 +346,7 @@ function updateDistanceDisplay() {
     els.updateText.textContent = "Route voltooid";
     els.progressBar.style.width = "100%";
     renderPongProgress();
+    uploadGroupStatus({ progress: "completed", distanceMeters: 0 });
     clearTimers();
     return;
   }
@@ -336,6 +362,7 @@ function updateDistanceDisplay() {
 
   els.distanceText.textContent = formatDistance(distance);
   lastDisplayedDistance = distance;
+  uploadGroupStatus({ distanceMeters: Math.round(distance) });
   els.updateText.textContent = `Laatst bijgewerkt om ${new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}`;
   els.locationText.textContent = `Jouw locatie is beschikbaar. Doelcoördinaten en richting blijven verborgen. Locatie-nauwkeurigheid: ongeveer ${Math.round(lastPosition.coords.accuracy || 0)} meter.`;
   els.progressBar.style.width = `${(activeCheckpointIndex / group.checkpoints.length) * 100}%`;

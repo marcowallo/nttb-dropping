@@ -108,3 +108,53 @@ Deze versie behoudt de functies van v4.4, maar heeft een volledig nieuw ontwerp:
 - Beheerpagina in dashboardstijl.
 
 Upload de bestanden naar GitHub Pages zoals eerder. Gebruik daarna `index.html?reset=1` op de telefoon om lokale oude data te wissen.
+
+
+## v7 - Firebase live synchronisatie
+
+Deze versie kan routes live synchroniseren via Firebase Realtime Database.
+
+### Wat werkt nu
+
+- App blijft hostbaar via GitHub Pages.
+- Routes kunnen uit Firebase worden geladen.
+- Beheerpagina schrijft wijzigingen naar Firebase.
+- Deelnemers krijgen routewijzigingen automatisch binnen.
+- Deelnemers uploaden hun laatste status wanneer de app open is:
+  - groep;
+  - actieve checkpoint;
+  - afstand;
+  - laatste bekende locatie;
+  - tijdstip laatste update.
+- Beheerpagina toont een simpele live groepsstatus.
+
+### Firebase instellen
+
+1. Ga naar Firebase Console.
+2. Maak een nieuw project.
+3. Voeg een Web App toe.
+4. Kopieer de Firebase config.
+5. Open `firebase-config.js`.
+6. Vervang de voorbeeldwaarden door jouw config.
+7. Maak een Realtime Database aan.
+8. Kies bij testen tijdelijk test mode.
+9. Upload alle bestanden opnieuw naar GitHub Pages.
+
+### Realtime Database rules voor testen
+
+Gebruik tijdelijk:
+
+```json
+{
+  "rules": {
+    ".read": true,
+    ".write": true
+  }
+}
+```
+
+Let op: dit is handig om te testen, maar niet veilig voor definitief gebruik. Voor kampgebruik kunnen we later betere regels maken.
+
+### Belangrijk
+
+Locatie uploaden werkt alleen wanneer deelnemers de app open hebben en toestemming hebben gegeven. Betrouwbare achtergrondlocatie blijft beperkt in een PWA.

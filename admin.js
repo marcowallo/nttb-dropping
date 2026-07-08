@@ -3,6 +3,8 @@ const STORAGE_KEY = "droppingDataV3";
 
 
 let appData = normalizeData(loadData());
+let unsubscribeRemoteData = null;
+let unsubscribeGroupStatus = null;
 let selectedGroupIndex = 0;
 
 const els = {
@@ -42,6 +44,11 @@ function normalizeData(data) {
 
 function saveData() {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+  if (window.DroppingSync && window.DroppingSync.enabled) {
+    window.DroppingSync.setData(appData).catch(error => {
+      console.warn("Opslaan naar Firebase mislukt.", error);
+    });
+  }
 }
 
 function render() {
@@ -303,4 +310,84 @@ if (els.testDistanceBtn) {
 }
 
 
-render();
+
+async function initAdmin() {
+  const syncReady = window.DroppingSync && window.DroppingSync.init();
+
+  if (syncReady) {
+    try {
+      const remoteData = await window.DroppingSync.getData();
+
+      if (remoteData) {
+        appData = normalizeData(remoteData);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+      } else {
+        await window.DroppingSync.setData(appData);
+      }
+
+      unsubscribeRemoteData = window.DroppingSync.onData(remoteData => {
+        appData = normalizeData(remoteData);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appData));
+        selectedGroupIndex = Math.min(selectedGroupIndex, appData.groups.length - 1);
+        render();
+      });
+
+      unsubscribeGroupStatus = window.DroppingSync.onGroupStatus(statusMap => {
+        renderGroupStatus(statusMap);
+      });
+    } catch (error) {
+      console.warn("Firebase laden mislukt. Lokale data wordt gebruikt.", error);
+    }
+  }
+
+  render();
+}
+
+function renderGroupStatus(statusMap) {
+  let box = document.getElementById("liveStatusBox");
+  if (!box) {
+    box = document.createElement("section");
+    box.id = "liveStatusBox";
+    box.className = "admin-card";
+    const title = document.createElement("h2");
+    title.textContent = "Live groepsstatus";
+    box.appendChild(title);
+    const intro = document.createElement("p");
+    intro.className = "muted";
+    intro.textContent = "Laatste bekende status van deelnemers die de app open hebben.";
+    box.appendChild(intro);
+    const list = document.createElement("div");
+    list.id = "liveStatusList";
+    box.appendChild(list);
+    const firstAdminCard = document.querySelector(".admin-card");
+    firstAdminCard.parentNode.insertBefore(box, firstAdminCard.nextSibling);
+  }
+
+  const list = document.getElementById("liveStatusList");
+  list.innerHTML = "";
+
+  const values = Object.values(statusMap || {});
+  if (!values.length) {
+    list.innerHTML = `<p class="muted">Nog geen live deelnemersstatus ontvangen.</p>`;
+    return;
+  }
+
+  values
+    .sort((a, b) => String(a.groupName).localeCompare(String(b.groupName)))
+    .forEach(status => {
+      const item = document.createElement("div");
+      item.className = "live-status-item";
+      const updated = status.updatedAt ? new Date(status.updatedAt).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" }) : "-";
+      const distance = Number.isFinite(status.distanceMeters) ? (status.distanceMeters >= 1000 ? `${(status.distanceMeters/1000).toFixed(2)} km` : `${status.distanceMeters} m`) : "-";
+      item.innerHTML = `
+        <strong>${escapeHtml(status.groupName || "Onbekende groep")}</strong>
+        <span>${escapeHtml(status.activeCheckpointName || "-")}</span>
+        <span>Afstand: ${distance}</span>
+        <span>Laatst gezien: ${updated}</span>
+      `;
+      list.appendChild(item);
+    });
+}
+
+initAdmin();
+

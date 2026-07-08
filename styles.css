@@ -588,3 +588,23 @@ button:disabled {
   .progress-meta { flex-direction: column; gap: 4px; }
   .pong-dot { width: 36px; height: 36px; }
 }
+
+
+.live-status-item {
+  display: grid;
+  gap: 4px;
+  padding: 13px 14px;
+  margin: 10px 0;
+  border-radius: 18px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--line);
+}
+
+.live-status-item strong {
+  color: var(--lime);
+}
+
+.live-status-item span {
+  color: var(--muted);
+  font-size: .92rem;
+}
