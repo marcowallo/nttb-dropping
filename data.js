@@ -5,7 +5,7 @@ const DEFAULT_DATA = {
   },
   groups: [
     {
-      name: "Groep 1",
+      name: "Test 1",
       checkpoints: [
         {
           name: "Checkpoint 1",
