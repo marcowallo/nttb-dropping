@@ -9,7 +9,7 @@ const DEFAULT_DATA = {
       checkpoints: [
         {
           name: "Checkpoint 1",
-          lat: 52.000314, 
+          lat: 53.000314, 
           lng: 4.375723,
           message: "Goed gedaan! Jullie hebben checkpoint 1 bereikt. Open de volgende opdracht."
         },
