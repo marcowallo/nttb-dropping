@@ -9,20 +9,20 @@ const DEFAULT_DATA = {
       "checkpoints": [
         {
           "name": "Checkpoint 1",
-          "lat": 52.00000,
-          "lng": 4.22281,
+          "lat": 52.001763,
+          "lng": 4.370245,
           "message": "Check 1 werkt!"
         },
         {
           "name": "Checkpoint 2",
-          "lat": 51.59553,
-          "lng": 4.22146,
+          "lat": 51.999999,
+          "lng": 4.374448,
           "message": "Check 2 werkt"
         },
         {
           "name": "Eindlocatie",
-          "lat": 52.00065,
-          "lng": 4.22131,
+          "lat": 51.998669,
+          "lng": 4.370768,
           "message": "Finish!"
         }
       ]
