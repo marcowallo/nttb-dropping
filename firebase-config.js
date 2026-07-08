@@ -1,17 +1,21 @@
-// Firebase-config voor Dropping v7
-// Vervang de voorbeeldwaarden hieronder door jouw eigen Firebase web app config.
-// Deze vind je in Firebase Console → Project settings → Your apps → Web app.
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+// TODO: Add SDKs for Firebase products that you want to use
+// https://firebase.google.com/docs/web/setup#available-libraries
 
-window.DROPPING_FIREBASE_CONFIG = {
-  apiKey: "VUL_HIER_JE_API_KEY_IN",
-  authDomain: "VUL_HIER_JE_PROJECT.firebaseapp.com",
-  databaseURL: "https://VUL_HIER_JE_PROJECT-default-rtdb.europe-west1.firebasedatabase.app",
-  projectId: "VUL_HIER_JE_PROJECT_ID_IN",
-  storageBucket: "VUL_HIER_JE_PROJECT.appspot.com",
-  messagingSenderId: "VUL_HIER_JE_SENDER_ID_IN",
-  appId: "VUL_HIER_JE_APP_ID_IN"
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: "AIzaSyCwrQOYOY6cnTRCtblbh6GJcySzzHEw_vo",
+  authDomain: "nttb-kamp-dropping.firebaseapp.com",
+  projectId: "nttb-kamp-dropping",
+  storageBucket: "nttb-kamp-dropping.firebasestorage.app",
+  messagingSenderId: "878956598499",
+  appId: "1:878956598499:web:afccee79533be49a4761d6",
+  measurementId: "G-7L2DBLEBNF"
 };
 
-// Database pad. Handig als je later meerdere droppings wilt bewaren.
-// Bijvoorbeeld: "kamp2026" of "test".
-window.DROPPING_FIREBASE_PATH = "kamp2026";
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
