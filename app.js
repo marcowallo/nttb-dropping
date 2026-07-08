@@ -11,6 +11,9 @@ let watchId = null;
 let updateTimerId = null;
 let countdownTimerId = null;
 let arrivedKeyShown = null;
+let lastDisplayedDistance = null;
+let arrivalCheckTimerId = null;
+let reminderTimerId = null;
 
 const els = {
   setupCard: document.getElementById("setupCard"),
@@ -26,6 +29,7 @@ const els = {
   progressBar: document.getElementById("progressBar"),
   updateText: document.getElementById("updateText"),
   distanceText: document.getElementById("distanceText"),
+  previousDistanceText: document.getElementById("previousDistanceText"),
   countdownText: document.getElementById("countdownText"),
   arrivalBox: document.getElementById("arrivalBox"),
   checkpointMessage: document.getElementById("checkpointMessage"),
@@ -78,6 +82,10 @@ function populateGroups() {
 }
 
 function init() {
+  if ("Notification" in window && Notification.permission === "default") {
+    Notification.requestPermission().catch(() => {});
+  }
+
   const params = new URLSearchParams(window.location.search);
   if (params.has("reset")) {
     localStorage.removeItem(STORAGE_KEY);
@@ -144,44 +152,71 @@ function startLocationSystem() {
   const intervalMs = getIntervalMs();
   updateTimerId = setInterval(() => requestLocation(true), intervalMs);
   countdownTimerId = setInterval(updateCountdown, 1000);
+  arrivalCheckTimerId = setInterval(() => requestLocation(false, true), 15000);
+  reminderTimerId = setInterval(checkTimedUpdateReminder, 1000);
 }
 
 function clearTimers() {
   if (watchId !== null) navigator.geolocation.clearWatch(watchId);
   if (updateTimerId !== null) clearInterval(updateTimerId);
   if (countdownTimerId !== null) clearInterval(countdownTimerId);
+  if (arrivalCheckTimerId !== null) clearInterval(arrivalCheckTimerId);
+  if (reminderTimerId !== null) clearInterval(reminderTimerId);
   watchId = null;
   updateTimerId = null;
   countdownTimerId = null;
+  arrivalCheckTimerId = null;
+  reminderTimerId = null;
 }
 
 function getIntervalMs() {
   return Math.max(1, Number(appData.settings.updateIntervalMinutes || 5)) * 60 * 1000;
 }
 
-function requestLocation(forceDisplay) {
+function requestLocation(forceDisplay, arrivalOnly = false) {
   setGpsBadge(false, "GPS...");
   navigator.geolocation.getCurrentPosition(
-    pos => handlePosition(pos, forceDisplay),
+    pos => handlePosition(pos, forceDisplay, arrivalOnly),
     handleGeoError,
     { enableHighAccuracy: true, timeout: 15000, maximumAge: 0 }
   );
 }
 
-function handlePosition(position, forceDisplay = false) {
+function handlePosition(position, forceDisplay = false, arrivalOnly = false) {
   lastPosition = position;
   setGpsBadge(true, "GPS OK");
 
   const now = Date.now();
   const intervalMs = getIntervalMs();
 
+  if (arrivalOnly) {
+    const checkpoint = currentCheckpoint();
+    if (!checkpoint) return;
+
+    const distance = distanceMeters(
+      position.coords.latitude,
+      position.coords.longitude,
+      checkpoint.lat,
+      checkpoint.lng
+    );
+
+    const radius = Number(appData.settings.radiusMeters || 50);
+    if (distance <= radius) {
+      lastVisibleUpdateAt = now;
+      nextUpdateAt = now + intervalMs;
+      updateDistanceDisplay();
+      updateCountdown();
+      notifyUser("Checkpoint bereikt!", checkpoint.message || "Jullie zijn bij het checkpoint.", "arrival");
+    }
+    return;
+  }
+
   if (forceDisplay || now - lastVisibleUpdateAt >= intervalMs) {
     lastVisibleUpdateAt = now;
     nextUpdateAt = now + intervalMs;
     updateDistanceDisplay();
     updateCountdown();
-    playSound("update");
-    vibrate("update");
+    notifyUser("Nieuwe update", "De afstand is bijgewerkt.", "update");
   }
 }
 
@@ -214,15 +249,40 @@ function playSound(type = "update") {
     });
 
     gain.gain.setValueAtTime(0.0001, ctx.currentTime);
-    gain.gain.exponentialRampToValueAtTime(type === "arrival" ? 0.11 : 0.07, ctx.currentTime + 0.02);
-    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + notes.length * 0.09 + 0.14);
+    gain.gain.exponentialRampToValueAtTime(type === "arrival" ? 0.12 : 0.075, ctx.currentTime + 0.02);
+    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + notes.length * 0.09 + 0.16);
   } catch (e) {}
 }
 
 function vibrate(type = "update") {
   if (!navigator.vibrate) return;
   if (type === "arrival") navigator.vibrate([220, 90, 220, 90, 320]);
-  else navigator.vibrate(120);
+  else navigator.vibrate([120, 60, 120]);
+}
+
+function notifyUser(title, body, type = "update") {
+  playSound(type);
+  vibrate(type);
+
+  if ("Notification" in window && Notification.permission === "granted" && document.hidden) {
+    try {
+      new Notification(title, {
+        body,
+        icon: "icon.svg",
+        silent: false
+      });
+    } catch (e) {}
+  }
+}
+
+function checkTimedUpdateReminder() {
+  if (!nextUpdateAt || Date.now() < nextUpdateAt) return;
+
+  if (document.hidden) {
+    notifyUser("Tijd voor een update", "Open Dropping om de nieuwe afstand te bekijken.", "update");
+  }
+
+  nextUpdateAt = Date.now() + getIntervalMs();
 }
 
 function handleGeoError(error) {
@@ -251,7 +311,13 @@ function updateDistanceDisplay() {
   const userLng = lastPosition.coords.longitude;
   const distance = distanceMeters(userLat, userLng, checkpoint.lat, checkpoint.lng);
 
+  if (lastDisplayedDistance !== null) {
+    els.previousDistanceText.textContent = `Vorige afstand: ${formatDistance(lastDisplayedDistance)}`;
+    els.previousDistanceText.classList.remove("hidden");
+  }
+
   els.distanceText.textContent = formatDistance(distance);
+  lastDisplayedDistance = distance;
   els.updateText.textContent = `Laatst bijgewerkt om ${new Date().toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })}`;
   els.locationText.textContent = `Jouw locatie is beschikbaar. Doelcoördinaten en richting blijven verborgen. Locatie-nauwkeurigheid: ongeveer ${Math.round(lastPosition.coords.accuracy || 0)} meter.`;
   els.progressBar.style.width = `${(activeCheckpointIndex / group.checkpoints.length) * 100}%`;
@@ -305,6 +371,8 @@ function nextCheckpoint() {
 
   lastVisibleUpdateAt = 0;
   nextUpdateAt = 0;
+  lastDisplayedDistance = null;
+  if (els.previousDistanceText) els.previousDistanceText.classList.add("hidden");
   showRoute();
 }
 
@@ -337,6 +405,8 @@ els.startBtn.addEventListener("click", () => {
   activeGroupIndex = Number(els.groupSelect.value);
   activeCheckpointIndex = 0;
   lastVisibleUpdateAt = 0;
+  lastDisplayedDistance = null;
+  if (els.previousDistanceText) els.previousDistanceText.classList.add("hidden");
   showRoute();
 });
 
@@ -344,3 +414,12 @@ els.nextBtn.addEventListener("click", nextCheckpoint);
 els.resetBtn.addEventListener("click", resetRoute);
 
 init();
+
+
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && activeGroupIndex !== null) {
+    if (nextUpdateAt && Date.now() >= nextUpdateAt) {
+      requestLocation(true);
+    }
+  }
+});

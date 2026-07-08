@@ -9,21 +9,27 @@ const DEFAULT_DATA = {
       checkpoints: [
         {
           name: "Checkpoint 1",
-          lat: 53.000314, 
-          lng: 4.375723,
+          lat: 52.3676,
+          lng: 4.9041,
           message: "Goed gedaan! Jullie hebben checkpoint 1 bereikt. Open de volgende opdracht."
         },
         {
           name: "Checkpoint 2",
-          lat: 51.998617, 
-          lng: 4.370785,
+          lat: 52.3702,
+          lng: 4.8952,
           message: "Mooi werk! Jullie mogen door naar checkpoint 3."
         },
         {
+          name: "Checkpoint 3",
+          lat: 52.3731,
+          lng: 4.8922,
+          message: "Bijna klaar. Nog één laatste stuk naar de eindlocatie."
+        },
+        {
           name: "Eindlocatie",
-          lat: 52.001855, 
-          lng: 4.370401,
-          message: "Check voltooid"
+          lat: 52.3791,
+          lng: 4.9003,
+          message: "Gefeliciteerd, jullie zijn aangekomen bij de eindlocatie!"
         }
       ]
     },

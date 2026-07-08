@@ -18,7 +18,7 @@
 
     <section class="card" id="setupCard">
       <h2>Start je route</h2>
-      <p class="muted">Kies je groep en geef locatie-toegang.</p>
+      <p class="muted">Kies je groep en geef locatie-toegang. De app toont alleen de afstand, geen richting of coördinaten.</p>
 
       <label for="groupSelect">Groep</label>
       <select id="groupSelect"></select>
@@ -37,7 +37,7 @@
           <button id="resetBtn" class="pill danger">Reset</button>
         </div>
 
-        <div class="progress-meta">
+        <div class="score-progress"><span class="done">🏓</span><span class="done">🏓</span><span class="todo">🏓</span><span class="todo">🏁</span></div><div class="progress-meta">
           <span id="stepText">Checkpoint 1 van 4</span>
           <span id="updateText">Update zoeken...</span>
         </div>
@@ -52,6 +52,7 @@
 
         <div class="distance-ring">
           <div>
+            <span id="previousDistanceText" class="previous-distance hidden">Vorige afstand: --</span>
             <span class="distance-label">Afstand</span>
             <strong id="distanceText">GPS zoeken...</strong>
           </div>
@@ -64,16 +65,27 @@
 
       </section>
 
-      <section id="arrivalBox" class="arrival-card hidden">
-        <div class="confetti" aria-hidden="true">
-          <span></span><span></span><span></span><span></span><span></span><span></span>
+      <section id="arrivalBox" class="arrival-overlay hidden">
+        <div class="arrival-modal">
+          <div class="confetti" aria-hidden="true">
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+            <span></span><span></span><span></span><span></span><span></span><span></span>
+          </div>
+          <div class="arrival-icon" aria-hidden="true">🎉</div>
+          <p class="eyebrow">Gelukt</p>
+          <h2>Checkpoint bereikt!</h2>
+          <p id="checkpointMessage"></p>
+          <button id="nextBtn" class="primary">Door naar volgende checkpoint</button>
         </div>
-        <p class="eyebrow">Gelukt</p>
-        <h2>Checkpoint bereikt!</h2>
-        <p id="checkpointMessage"></p>
-        <button id="nextBtn" class="primary">Door naar volgende checkpoint</button>
       </section>
 
+      <section class="card small-card">
+        <details>
+          <summary>Wat ziet de app?</summary>
+          <p id="locationText" class="muted">Nog geen GPS-locatie beschikbaar.</p>
+          <p class="muted">Checkpointcoördinaten en richting zijn verborgen.</p>
+        </details>
+      </section>
     </section>
   </main>
 

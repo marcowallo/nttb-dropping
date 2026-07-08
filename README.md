@@ -81,3 +81,23 @@ Update v4.2:
   - checkpoint 1 van de geselecteerde groep;
   - berekende afstand;
   - GPS-nauwkeurigheid.
+
+
+## Update v4.4
+
+- Geluid en trilling bij een nieuwe zichtbare afstandsupdate.
+- Geluid/trilling/notificatiepoging als de timer voorbij is terwijl het scherm uit of de app verborgen is.
+- Vorige afstand wordt klein boven de huidige afstand getoond.
+- Elke 15 seconden wordt binnen de open app gecontroleerd of de groep al bij het checkpoint is.
+- Als de groep binnen de radius is, verschijnt direct een grote overlay over het scherm.
+- Grotere checkpoint-pop-up met extra animatie en feestelijk geluid.
+
+Let op: bij iPhone/Android kan een PWA niet gegarandeerd blijven draaien wanneer het scherm uit staat. De app probeert notificaties te tonen als de browser dat toestaat, maar echte betrouwbare scherm-uit meldingen vereisen een native app.
+
+
+## v5 Visual Redesign
+- Donker sportthema
+- Neon blauw/lime kleurenschema
+- Scorebord-stijl afstand
+- Glassmorphism panelen
+- Tafeltennis voortgangsindicator

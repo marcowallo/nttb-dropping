@@ -471,3 +471,169 @@ summary {
   15% { opacity: 1; }
   100% { transform: translateY(220px) rotate(360deg); opacity: 0; }
 }
+
+
+.previous-distance {
+  display: block;
+  color: #5f7188;
+  font-size: 0.86rem;
+  font-weight: 900;
+  margin-bottom: 8px;
+}
+
+.arrival-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(7, 31, 67, 0.78);
+  backdrop-filter: blur(8px);
+  animation: overlayFadeIn .25s ease-out;
+}
+
+.arrival-modal {
+  width: min(520px, 100%);
+  position: relative;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 85% 0%, rgba(255,138,31,0.30), transparent 16rem),
+    linear-gradient(180deg, #ffffff, #fff4e8);
+  border: 1px solid #ffd0a0;
+  border-radius: 30px;
+  padding: 26px 20px 20px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.35);
+  animation: arrivalPop .45s cubic-bezier(.2, 1.3, .3, 1);
+  text-align: center;
+}
+
+.arrival-modal .eyebrow {
+  color: var(--orange);
+}
+
+.arrival-modal h2 {
+  color: #b35400;
+  font-size: clamp(2rem, 9vw, 3.5rem);
+  margin-bottom: 10px;
+}
+
+.arrival-modal p {
+  font-size: 1.08rem;
+  line-height: 1.45;
+}
+
+.arrival-icon {
+  width: 88px;
+  height: 88px;
+  display: grid;
+  place-items: center;
+  margin: 0 auto 10px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--orange), var(--blue-2));
+  font-size: 2.6rem;
+  box-shadow: 0 12px 30px rgba(255,138,31,0.28);
+  animation: iconBounce 1s ease-in-out infinite;
+}
+
+.arrival-modal .confetti span {
+  animation-duration: 1.9s;
+}
+
+.arrival-modal .confetti span:nth-child(7) { left: 18%; animation-delay: .28s; background: #06d6a0; }
+.arrival-modal .confetti span:nth-child(8) { left: 35%; animation-delay: .34s; background: #ffd166; }
+.arrival-modal .confetti span:nth-child(9) { left: 50%; animation-delay: .26s; background: var(--blue-2); }
+.arrival-modal .confetti span:nth-child(10) { left: 67%; animation-delay: .32s; background: #ef476f; }
+.arrival-modal .confetti span:nth-child(11) { left: 82%; animation-delay: .38s; background: var(--orange); }
+.arrival-modal .confetti span:nth-child(12) { left: 94%; animation-delay: .30s; background: #ffffff; }
+
+@keyframes overlayFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes arrivalPop {
+  from { transform: translateY(24px) scale(.88); opacity: 0; }
+  to { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0) rotate(-4deg); }
+  50% { transform: translateY(-8px) rotate(4deg); }
+}
+
+
+/* ===== v5 Theme ===== */
+:root{
+ --bg:#0B1026;
+ --panel:#182039;
+ --primary:#2D9CFF;
+ --accent:#8BFF4D;
+ --warning:#FF9F1C;
+ --text:#F8FAFF;
+ --muted:#B7C0D8;
+}
+
+body{
+ background:
+ radial-gradient(circle at 20% 0%, rgba(45,156,255,.18), transparent 30rem),
+ radial-gradient(circle at 90% 100%, rgba(139,255,77,.12), transparent 24rem),
+ var(--bg);
+ color:var(--text);
+}
+
+.hero{
+ background:linear-gradient(135deg,#1b2c69,#2D9CFF);
+ border:1px solid rgba(255,255,255,.08);
+}
+
+.card,.distance-card,.arrival-modal{
+ background:rgba(24,32,57,.82);
+ backdrop-filter:blur(18px);
+ color:var(--text);
+ border:1px solid rgba(255,255,255,.08);
+}
+
+.distance-ring{
+ background:rgba(255,255,255,.04);
+ border:3px solid var(--primary);
+ box-shadow:0 0 30px rgba(45,156,255,.35);
+}
+
+.distance-ring strong{
+ color:var(--accent);
+ font-size:4.5rem;
+ text-shadow:0 0 18px rgba(139,255,77,.35);
+ font-family:monospace;
+ letter-spacing:.04em;
+}
+
+button.primary{
+ background:linear-gradient(135deg,var(--primary),#55b8ff);
+}
+
+.progress-track{
+ background:#243050;
+}
+.progress-bar{
+ background:linear-gradient(90deg,var(--accent),var(--primary));
+}
+
+.arrival-modal{
+ border:2px solid var(--accent);
+ box-shadow:0 0 40px rgba(139,255,77,.25);
+}
+
+.arrival-icon{
+ background:linear-gradient(135deg,var(--accent),var(--primary));
+}
+
+.score-progress{
+ display:flex;
+ justify-content:center;
+ gap:12px;
+ margin:12px 0;
+ font-size:1.6rem;
+}
+.score-progress span.done{color:var(--accent);}
+.score-progress span.todo{color:#506080;}
