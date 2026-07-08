@@ -531,3 +531,53 @@ button:disabled { opacity: .4; }
   .progress-meta { flex-direction: column; gap: 4px; }
   .pong-dot { width: 36px; height: 36px; }
 }
+
+
+.leader-map {
+  width: 100%;
+  height: min(62vh, 520px);
+  min-height: 320px;
+  border-radius: 24px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: rgba(255,255,255,.04);
+  box-shadow: inset 0 0 30px rgba(45,156,255,.05);
+}
+
+.map-actions {
+  margin-top: 8px;
+}
+
+.leaflet-container {
+  font-family: inherit;
+  background: #111A36;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+  background: #182039;
+  color: #F8FAFF;
+  border: 1px solid rgba(255,255,255,.10);
+  box-shadow: 0 12px 28px rgba(0,0,0,.35);
+}
+
+.leaflet-popup-content {
+  line-height: 1.45;
+}
+
+.group-map-marker {
+  background: transparent;
+  border: 0;
+}
+
+.group-map-marker div {
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--marker-color) 28%, #0B1026);
+  border: 2px solid var(--marker-color);
+  box-shadow: 0 0 20px color-mix(in srgb, var(--marker-color) 46%, transparent);
+  font-size: 1.25rem;
+}

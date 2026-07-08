@@ -4,6 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Beheer - Dropping</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="styles/theme.css">
 </head>
 <body class="admin">
@@ -15,6 +16,15 @@
       </div>
       <a href="index.html" class="header-action">App</a>
     </header>
+
+    <section class="admin-card">
+      <h2>Live kaart</h2>
+      <p class="muted">Alleen zichtbaar voor de leiding. Deelnemers zien geen kaart of richting.</p>
+      <div id="leaderMap" class="leader-map"></div>
+      <div class="map-actions">
+        <button id="fitMapBtn" class="secondary">Toon alle groepen</button>
+      </div>
+    </section>
 
     <section class="admin-card">
       <h2>Live groepsstatus</h2>
@@ -80,6 +90,7 @@
     </section>
   </main>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
   <script src="firebase-config.js"></script>

@@ -1,6 +1,8 @@
 (() => {
   const els = {
     liveStatusList: document.getElementById("liveStatusList"),
+    leaderMap: document.getElementById("leaderMap"),
+    fitMapBtn: document.getElementById("fitMapBtn"),
     radiusInput: document.getElementById("radiusInput"),
     intervalInput: document.getElementById("intervalInput"),
     groupSelect: document.getElementById("groupSelect"),
@@ -19,6 +21,8 @@
 
   let data = DroppingStorage.getData();
   let selectedGroupIndex = 0;
+  let map = null;
+  let groupMarkers = new Map();
 
   function saveData({ remote = true } = {}) {
     data = DroppingStorage.setData(data);
@@ -223,7 +227,91 @@
     });
   }
 
+
+  function initMap() {
+    if (!window.L || !els.leaderMap || map) return;
+
+    map = L.map("leaderMap", {
+      zoomControl: true,
+      attributionControl: true
+    }).setView([52.1326, 5.2913], 7);
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      maxZoom: 19,
+      attribution: "&copy; OpenStreetMap"
+    }).addTo(map);
+
+    setTimeout(() => map.invalidateSize(), 250);
+  }
+
+  function markerIcon(status) {
+    const progress = status.progress || "active";
+    const color = progress === "arrived" ? "#8BFF4D" : progress === "completed" ? "#6EC6FF" : "#FF9F1C";
+
+    return L.divIcon({
+      className: "group-map-marker",
+      html: `<div style="--marker-color:${color}">🏓</div>`,
+      iconSize: [38, 38],
+      iconAnchor: [19, 19],
+      popupAnchor: [0, -18]
+    });
+  }
+
+  function updateMapMarkers(statusMap) {
+    initMap();
+    if (!map) return;
+
+    const seen = new Set();
+
+    Object.values(statusMap || {}).forEach(status => {
+      if (!Number.isFinite(status.lat) || !Number.isFinite(status.lng)) return;
+
+      const key = String(status.groupName || "Onbekende groep");
+      seen.add(key);
+
+      const updated = status.updatedAt
+        ? new Date(status.updatedAt).toLocaleTimeString("nl-NL", { hour: "2-digit", minute: "2-digit" })
+        : "-";
+      const distance = Number.isFinite(status.distanceMeters) ? Distance.format(status.distanceMeters) : "-";
+      const accuracy = Number.isFinite(status.accuracy) ? `±${status.accuracy} m` : "-";
+
+      const popup = `
+        <strong>${escapeHtml(key)}</strong><br>
+        Checkpoint: ${escapeHtml(status.activeCheckpointName || "-")}<br>
+        Afstand: ${distance}<br>
+        GPS: ${accuracy}<br>
+        Laatst gezien: ${updated}
+      `;
+
+      if (!groupMarkers.has(key)) {
+        const marker = L.marker([status.lat, status.lng], { icon: markerIcon(status) }).addTo(map);
+        marker.bindPopup(popup);
+        groupMarkers.set(key, marker);
+      } else {
+        const marker = groupMarkers.get(key);
+        marker.setLatLng([status.lat, status.lng]);
+        marker.setIcon(markerIcon(status));
+        marker.setPopupContent(popup);
+      }
+    });
+
+    for (const [key, marker] of groupMarkers.entries()) {
+      if (!seen.has(key)) {
+        marker.remove();
+        groupMarkers.delete(key);
+      }
+    }
+  }
+
+  function fitMapToGroups() {
+    if (!map || groupMarkers.size === 0) return;
+    const group = L.featureGroup(Array.from(groupMarkers.values()));
+    map.fitBounds(group.getBounds().pad(0.25), { maxZoom: 16 });
+  }
+
+
   function renderLiveStatus(statusMap) {
+    updateMapMarkers(statusMap);
     const statuses = Object.values(statusMap || {});
     if (!statuses.length) {
       els.liveStatusList.innerHTML = `<p class="muted">Nog geen live deelnemersstatus ontvangen.</p>`;
@@ -251,6 +339,7 @@
   }
 
   async function init() {
+    initMap();
     DroppingFirebase.init();
 
     if (DroppingFirebase.isEnabled()) {
@@ -301,6 +390,10 @@
     els.jsonBox.value = JSON.stringify(data, null, 2);
     flash("Export klaar.");
   });
+
+  if (els.fitMapBtn) {
+    els.fitMapBtn.addEventListener("click", fitMapToGroups);
+  }
 
   els.importBtn.addEventListener("click", () => {
     try {
