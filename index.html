@@ -9,60 +9,66 @@
 </head>
 <body class="participant">
   <main class="app-shell">
-    <header class="hero">
+    <header class="app-header">
       <div>
+        <p class="kicker">Tafeltenniskamp</p>
         <h1>Dropping</h1>
       </div>
-      <span class="badge" id="connectionBadge">GPS</span>
+      <span class="gps-dot" id="connectionBadge" aria-label="GPS status">📡</span>
     </header>
 
-    <section class="card" id="setupCard">
-      <h2>Start je route</h2>
-      <p class="muted">Kies je groep en geef locatie-toegang. De app toont alleen de afstand, geen richting of coördinaten.</p>
+    <section class="start-card" id="setupCard">
+      <div class="brand-mark">🏓</div>
+      <p class="kicker">Selecteer team</p>
+      <h2>Start de route</h2>
+      <p class="muted">Jullie krijgen alleen afstandsupdates. Geen richting, geen kaart, geen coördinaten.</p>
 
       <label for="groupSelect">Groep</label>
       <select id="groupSelect"></select>
 
-      <button id="startBtn" class="primary">Start route</button>
-      <a href="admin.html" class="ghost-link">Beheerpagina</a>
+      <button id="startBtn" class="primary">Start wedstrijd</button>
+      <a href="admin.html" class="quiet-link">Beheer</a>
     </section>
 
     <section class="route hidden" id="routeCard">
-      <section class="card progress-card">
-        <div class="topline">
+      <section class="match-card">
+        <div class="match-top">
           <div>
-            <p class="eyebrow dark">Actieve groep</p>
+            <p class="kicker">Team</p>
             <h2 id="groupName">-</h2>
           </div>
-          <button id="resetBtn" class="pill danger">Reset</button>
+          <button id="resetBtn" class="reset-btn">Reset</button>
         </div>
 
-        <div class="score-progress"><span class="done">🏓</span><span class="done">🏓</span><span class="todo">🏓</span><span class="todo">🏁</span></div><div class="progress-meta">
+        <div id="pongProgress" class="pong-progress" aria-label="Route voortgang"></div>
+
+        <div class="progress-meta">
           <span id="stepText">Checkpoint 1 van 4</span>
           <span id="updateText">Update zoeken...</span>
         </div>
+
         <div class="progress-track">
           <div id="progressBar" class="progress-bar"></div>
         </div>
       </section>
 
-      <section class="distance-card">
-        <p class="eyebrow">Volgende checkpoint</p>
+      <section class="scoreboard">
+        <div class="scoreboard-lines"></div>
+        <p class="kicker">Volgende checkpoint</p>
         <h2 id="checkpointName">-</h2>
 
-        <div class="distance-ring">
-          <div>
-            <span id="previousDistanceText" class="previous-distance hidden">Vorige afstand: --</span>
-            <span class="distance-label">Afstand</span>
-            <strong id="distanceText">GPS zoeken...</strong>
-          </div>
+        <div class="previous-wrap">
+          <span id="previousDistanceText" class="previous-distance hidden">Vorige afstand: --</span>
         </div>
 
-        <div class="timer">
-          <span>Volgende automatische update</span>
+        <div class="score-distance">
+          <strong id="distanceText">GPS zoeken...</strong>
+        </div>
+
+        <div class="timer-card">
+          <span>Volgende update</span>
           <strong id="countdownText">--:--</strong>
         </div>
-
       </section>
 
       <section id="arrivalBox" class="arrival-overlay hidden">
@@ -71,17 +77,20 @@
             <span></span><span></span><span></span><span></span><span></span><span></span>
             <span></span><span></span><span></span><span></span><span></span><span></span>
           </div>
-          <div class="arrival-icon" aria-hidden="true">🎉</div>
-          <p class="eyebrow">Gelukt</p>
+          <div class="paddle-animation" aria-hidden="true">
+            <span class="paddle">🏓</span>
+            <span class="ball"></span>
+          </div>
+          <p class="kicker">Rally gewonnen</p>
           <h2>Checkpoint bereikt!</h2>
           <p id="checkpointMessage"></p>
-          <button id="nextBtn" class="primary">Door naar volgende checkpoint</button>
+          <button id="nextBtn" class="primary">Volgende rally</button>
         </div>
       </section>
 
-      <section class="card small-card">
+      <section class="details-card">
         <details>
-          <summary>Wat ziet de app?</summary>
+          <summary>GPS-details</summary>
           <p id="locationText" class="muted">Nog geen GPS-locatie beschikbaar.</p>
           <p class="muted">Checkpointcoördinaten en richting zijn verborgen.</p>
         </details>

@@ -1,10 +1,10 @@
 {
-  "name": "Dropping",
+  "name": "Dropping Tafeltenniskamp",
   "short_name": "Dropping",
   "start_url": "index.html",
   "display": "standalone",
-  "background_color": "#091c38",
-  "theme_color": "#1463d8",
+  "background_color": "#0B1026",
+  "theme_color": "#0B1026",
   "icons": [
     {
       "src": "icon.svg",

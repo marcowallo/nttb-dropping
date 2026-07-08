@@ -95,9 +95,16 @@ Update v4.2:
 Let op: bij iPhone/Android kan een PWA niet gegarandeerd blijven draaien wanneer het scherm uit staat. De app probeert notificaties te tonen als de browser dat toestaat, maar echte betrouwbare scherm-uit meldingen vereisen een native app.
 
 
-## v5 Visual Redesign
-- Donker sportthema
-- Neon blauw/lime kleurenschema
-- Scorebord-stijl afstand
-- Glassmorphism panelen
-- Tafeltennis voortgangsindicator
+## v6 - Table Tennis Tournament redesign
+
+Deze versie behoudt de functies van v4.4, maar heeft een volledig nieuw ontwerp:
+
+- Donker sport-/scorebordthema.
+- Neonblauw en limegroen kleurenschema.
+- Tafeltennisvoortgang met 🏓 en finishvlag.
+- Scorebord-stijl afstand.
+- GPS-status als compact icoon.
+- Grote checkpoint-overlay met pingponganimatie.
+- Beheerpagina in dashboardstijl.
+
+Upload de bestanden naar GitHub Pages zoals eerder. Gebruik daarna `index.html?reset=1` op de telefoon om lokale oude data te wissen.

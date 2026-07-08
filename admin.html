@@ -8,43 +8,42 @@
 </head>
 <body class="admin">
   <main class="app-shell">
-    
-    <header class="hero admin-hero">
+    <header class="app-header admin-header">
       <div>
-        <p class="eyebrow">Leiding</p>
+        <p class="kicker">Leiding dashboard</p>
         <h1>Beheer</h1>
       </div>
-      <a href="index.html" class="header-link">Deelnemers</a>
+      <a href="index.html" class="header-action">App</a>
     </header>
 
-    <section class="card">
-      <h2>Instellingen</h2>
+    <section class="admin-card">
+      <h2>Wedstrijdinstellingen</h2>
       <div class="grid2">
         <div>
-          <label for="radiusInput">Radius checkpoint in meter</label>
+          <label for="radiusInput">Radius checkpoint</label>
           <input id="radiusInput" type="number" min="5" step="5">
         </div>
         <div>
-          <label for="intervalInput">Update-interval in minuten</label>
+          <label for="intervalInput">Update-interval</label>
           <input id="intervalInput" type="number" min="1" step="1">
         </div>
       </div>
-      <p class="muted">Advies: radius 50 m en update-interval 5 minuten.</p>
+      <p class="muted">Advies: 50 meter en 5 minuten.</p>
     </section>
 
-    <section class="card">
-      <h2>Groepen</h2>
+    <section class="admin-card">
+      <h2>Teams</h2>
       <label for="groupSelect">Selecteer groep</label>
       <select id="groupSelect"></select>
 
       <div class="grid2">
-        <button id="addGroupBtn" class="secondary">Nieuwe groep</button>
-        <button id="deleteGroupBtn" class="danger">Verwijder groep</button>
+        <button id="addGroupBtn" class="secondary">Nieuw team</button>
+        <button id="deleteGroupBtn" class="danger">Verwijder team</button>
       </div>
     </section>
 
-    <section class="card">
-      <h2>Route bewerken</h2>
+    <section class="admin-card">
+      <h2>Routekaart</h2>
 
       <label for="groupNameInput">Groepsnaam</label>
       <input id="groupNameInput" placeholder="Bijv. Groep 1">
@@ -55,15 +54,14 @@
       <p id="saveStatus" class="status"></p>
     </section>
 
-
-    <section class="card">
+    <section class="admin-card">
       <h2>GPS-test</h2>
-      <p class="muted">Gebruik dit om te controleren of de ingevulde coördinaten en de afstandsberekening logisch zijn. Dit is alleen zichtbaar op de beheerpagina.</p>
+      <p class="muted">Controleer of de coördinaten en afstandsberekening logisch zijn.</p>
       <button id="testDistanceBtn" class="secondary">Test afstand vanaf mijn huidige locatie</button>
       <p id="testDistanceResult" class="status"></p>
     </section>
 
-    <section class="card">
+    <section class="admin-card">
       <h2>Import / export</h2>
       <p class="muted">Gebruik dit als backup of om dezelfde routes op een ander toestel te zetten.</p>
       <div class="grid2">
@@ -72,7 +70,7 @@
       </div>
       <textarea id="jsonBox" rows="10" placeholder="Route-data verschijnt hier, of plak hier data om te importeren."></textarea>
     </section>
-    </main>
+  </main>
 
   <script src="data.js"></script>
   <script src="admin.js"></script>

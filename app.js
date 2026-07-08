@@ -27,6 +27,7 @@ const els = {
   checkpointName: document.getElementById("checkpointName"),
   stepText: document.getElementById("stepText"),
   progressBar: document.getElementById("progressBar"),
+  pongProgress: document.getElementById("pongProgress"),
   updateText: document.getElementById("updateText"),
   distanceText: document.getElementById("distanceText"),
   previousDistanceText: document.getElementById("previousDistanceText"),
@@ -112,6 +113,20 @@ function currentCheckpoint() {
   return currentGroup()?.checkpoints?.[activeCheckpointIndex];
 }
 
+
+function renderPongProgress() {
+  const group = currentGroup();
+  if (!group || !els.pongProgress) return;
+
+  els.pongProgress.innerHTML = "";
+  group.checkpoints.forEach((checkpoint, index) => {
+    const dot = document.createElement("span");
+    dot.className = index < activeCheckpointIndex ? "pong-dot done" : index === activeCheckpointIndex ? "pong-dot active" : "pong-dot todo";
+    dot.textContent = index === group.checkpoints.length - 1 ? "🏁" : "🏓";
+    els.pongProgress.appendChild(dot);
+  });
+}
+
 function showRoute() {
   const group = currentGroup();
   const checkpoint = currentCheckpoint();
@@ -128,6 +143,7 @@ function showRoute() {
   const step = Math.min(activeCheckpointIndex + 1, total);
   els.stepText.textContent = `Checkpoint ${step} van ${total}`;
   els.progressBar.style.width = `${((activeCheckpointIndex) / total) * 100}%`;
+  renderPongProgress();
 
   saveState();
   startLocationSystem();
@@ -221,9 +237,10 @@ function handlePosition(position, forceDisplay = false, arrivalOnly = false) {
 }
 
 function setGpsBadge(ok, text) {
-  els.connectionBadge.textContent = text;
+  els.connectionBadge.textContent = "📡";
   els.connectionBadge.classList.toggle("gps-ok", ok);
   els.connectionBadge.classList.toggle("gps-error", !ok);
+  els.connectionBadge.title = text;
 }
 
 function playSound(type = "update") {
@@ -303,6 +320,7 @@ function updateDistanceDisplay() {
     els.distanceText.textContent = "Klaar";
     els.updateText.textContent = "Route voltooid";
     els.progressBar.style.width = "100%";
+    renderPongProgress();
     clearTimers();
     return;
   }
