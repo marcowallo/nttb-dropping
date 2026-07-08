@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Dropping</title>
+  <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="participant">
+  <main class="app-shell">
+    <header class="hero">
+      <div>
+        <h1>Dropping</h1>
+      </div>
+      <span class="badge" id="connectionBadge">GPS</span>
+    </header>
+
+    <section class="card" id="setupCard">
+      <h2>Start je route</h2>
+      <p class="muted">Kies je groep en geef locatie-toegang. De app toont alleen de afstand, geen richting of coördinaten.</p>
+
+      <label for="groupSelect">Groep</label>
+      <select id="groupSelect"></select>
+
+      <button id="startBtn" class="primary">Start route</button>
+      <a href="admin.html" class="ghost-link">Beheerpagina</a>
+    </section>
+
+    <section class="route hidden" id="routeCard">
+      <section class="card progress-card">
+        <div class="topline">
+          <div>
+            <p class="eyebrow dark">Actieve groep</p>
+            <h2 id="groupName">-</h2>
+          </div>
+          <button id="resetBtn" class="pill danger">Reset</button>
+        </div>
+
+        <div class="progress-meta">
+          <span id="stepText">Checkpoint 1 van 4</span>
+          <span id="updateText">Update zoeken...</span>
+        </div>
+        <div class="progress-track">
+          <div id="progressBar" class="progress-bar"></div>
+        </div>
+      </section>
+
+      <section class="distance-card">
+        <p class="eyebrow">Volgende checkpoint</p>
+        <h2 id="checkpointName">-</h2>
+
+        <div class="distance-ring">
+          <div>
+            <span class="distance-label">Afstand</span>
+            <strong id="distanceText">GPS zoeken...</strong>
+          </div>
+        </div>
+
+        <div class="timer">
+          <span>Volgende automatische update</span>
+          <strong id="countdownText">--:--</strong>
+        </div>
+
+      </section>
+
+      <section id="arrivalBox" class="arrival-card hidden">
+        <div class="confetti" aria-hidden="true">
+          <span></span><span></span><span></span><span></span><span></span><span></span>
+        </div>
+        <p class="eyebrow">Gelukt</p>
+        <h2>Checkpoint bereikt!</h2>
+        <p id="checkpointMessage"></p>
+        <button id="nextBtn" class="primary">Door naar volgende checkpoint</button>
+      </section>
+
+      <section class="card small-card">
+        <details>
+          <summary>Wat ziet de app?</summary>
+          <p id="locationText" class="muted">Nog geen GPS-locatie beschikbaar.</p>
+          <p class="muted">Checkpointcoördinaten en richting zijn verborgen.</p>
+        </details>
+      </section>
+    </section>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

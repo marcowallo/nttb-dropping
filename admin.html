@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Beheer - Dropping</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body class="admin">
+  <main class="app-shell">
+    <section id="pinScreen" class="pin-screen">
+      <div class="card pin-card">
+        <p class="eyebrow dark">Beveiligd</p>
+        <h1 class="pin-title">Beheer</h1>
+        <p class="muted">Voer de beheerpincode in om routes aan te passen.</p>
+
+        <label for="pinInput">Pincode</label>
+        <input id="pinInput" type="password" inputmode="numeric" autocomplete="off" placeholder="Voer pincode in">
+        <button id="pinBtn" class="primary">Ontgrendel beheer</button>
+        <p id="pinStatus" class="status"></p>
+        <a href="index.html" class="ghost-link">Terug naar deelnemerspagina</a>
+      </div>
+    </section>
+
+    <div id="adminContent" class="hidden">
+    <header class="hero admin-hero">
+      <div>
+        <p class="eyebrow">Leiding</p>
+        <h1>Beheer</h1>
+      </div>
+      <a href="index.html" class="header-link">Deelnemers</a>
+    </header>
+
+    <section class="card">
+      <h2>Instellingen</h2>
+      <div class="grid2">
+        <div>
+          <label for="radiusInput">Radius checkpoint in meter</label>
+          <input id="radiusInput" type="number" min="5" step="5">
+        </div>
+        <div>
+          <label for="intervalInput">Update-interval in minuten</label>
+          <input id="intervalInput" type="number" min="1" step="1">
+        </div>
+      </div>
+      <p class="muted">Advies: radius 50 m en update-interval 5 minuten.</p>
+    </section>
+
+    <section class="card">
+      <h2>Groepen</h2>
+      <label for="groupSelect">Selecteer groep</label>
+      <select id="groupSelect"></select>
+
+      <div class="grid2">
+        <button id="addGroupBtn" class="secondary">Nieuwe groep</button>
+        <button id="deleteGroupBtn" class="danger">Verwijder groep</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Route bewerken</h2>
+
+      <label for="groupNameInput">Groepsnaam</label>
+      <input id="groupNameInput" placeholder="Bijv. Groep 1">
+
+      <div id="checkpointEditor"></div>
+
+      <button id="saveBtn" class="primary">Opslaan</button>
+      <p id="saveStatus" class="status"></p>
+    </section>
+
+    <section class="card">
+      <h2>Import / export</h2>
+      <p class="muted">Gebruik dit als backup of om dezelfde routes op een ander toestel te zetten.</p>
+      <div class="grid2">
+        <button id="exportBtn" class="secondary">Exporteren</button>
+        <button id="importBtn" class="secondary">Importeren</button>
+      </div>
+      <textarea id="jsonBox" rows="10" placeholder="Route-data verschijnt hier, of plak hier data om te importeren."></textarea>
+    </section>
+    </div>
+  </main>
+
+  <script src="data.js"></script>
+  <script src="admin.js"></script>
+</body>
+</html>
