@@ -22,52 +22,51 @@
       <p class="kicker">Selecteer team</p>
       <h2>Start de route</h2>
       <p class="muted">Jullie krijgen alleen afstandsupdates. Geen richting, geen kaart, geen coördinaten.</p>
-
       <label for="groupSelect">Groep</label>
       <select id="groupSelect"></select>
-
       <button id="startBtn" class="primary">Start wedstrijd</button>
       <a href="admin.html" class="quiet-link">Beheer</a>
     </section>
 
     <section class="route hidden" id="routeCard">
+      <section id="emergencyBanner" class="emergency-banner hidden"></section>
+      <section id="messageBanner" class="message-banner hidden"></section>
+
       <section class="match-card">
         <div class="match-top">
           <div>
             <p class="kicker">Team</p>
             <h2 id="groupName">-</h2>
+            <p id="scoreText" class="muted">Score: 0</p>
           </div>
           <button id="resetBtn" class="reset-btn">Reset</button>
         </div>
-
         <div id="pongProgress" class="pong-progress"></div>
-
         <div class="progress-meta">
           <span id="stepText">Checkpoint 1 van 4</span>
-          <span id="updateText">Update zoeken...</span>
+          <span id="stopwatchText">00:00</span>
         </div>
-
-        <div class="progress-track">
-          <div id="progressBar" class="progress-bar"></div>
-        </div>
+        <div class="progress-track"><div id="progressBar" class="progress-bar"></div></div>
       </section>
 
       <section class="scoreboard">
         <div class="scoreboard-lines"></div>
         <p class="kicker">Volgende checkpoint</p>
         <h2 id="checkpointName">-</h2>
+        <div class="previous-wrap"><span id="previousDistanceText" class="previous-distance hidden">Vorige afstand: --</span></div>
+        <div class="score-distance"><strong id="distanceText">GPS zoeken...</strong></div>
+        <div class="timer-card"><span>Volgende update</span><strong id="countdownText">--:--</strong></div>
+        <p id="updateText" class="muted update-line">Update zoeken...</p>
+      </section>
 
-        <div class="previous-wrap">
-          <span id="previousDistanceText" class="previous-distance hidden">Vorige afstand: --</span>
-        </div>
-
-        <div class="score-distance">
-          <strong id="distanceText">GPS zoeken...</strong>
-        </div>
-
-        <div class="timer-card">
-          <span>Volgende update</span>
-          <strong id="countdownText">--:--</strong>
+      <section id="taskCard" class="details-card hidden">
+        <p class="kicker">Opdracht</p>
+        <p id="taskText"></p>
+        <div id="quizBox" class="hidden">
+          <label id="quizQuestionLabel" for="quizAnswerInput">Quizantwoord</label>
+          <input id="quizAnswerInput" placeholder="Vul antwoord in">
+          <button id="quizCheckBtn" class="secondary">Controleer antwoord</button>
+          <p id="quizStatus" class="status"></p>
         </div>
       </section>
 
@@ -77,10 +76,7 @@
             <span></span><span></span><span></span><span></span><span></span><span></span>
             <span></span><span></span><span></span><span></span><span></span><span></span>
           </div>
-          <div class="paddle-animation" aria-hidden="true">
-            <span class="paddle">🏓</span>
-            <span class="ball"></span>
-          </div>
+          <div class="paddle-animation" aria-hidden="true"><span class="paddle">🏓</span><span class="ball"></span></div>
           <p class="kicker">Rally gewonnen</p>
           <h2>Checkpoint bereikt!</h2>
           <p id="checkpointMessage"></p>
@@ -101,13 +97,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
   <script src="firebase-config.js"></script>
-
   <script src="data.js"></script>
+  <script src="shared/utils.js"></script>
   <script src="shared/distance.js"></script>
-  <script src="shared/storage.js"></script>
-  <script src="shared/firebase-service.js"></script>
-  <script src="shared/notifications.js"></script>
-  <script src="app/gps.js"></script>
-  <script src="app/participant.js"></script>
+  <script src="shared/firebase-v10.js"></script>
+  <script src="shared/notify.js"></script>
+  <script src="app/participant-v10.js"></script>
 </body>
 </html>

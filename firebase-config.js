@@ -1,6 +1,5 @@
-// Dropping v8 Firebase config.
-// Plak hier jouw Firebase web app config.
-// LET OP: gebruik deze compat-vorm, dus GEEN import-regels.
+// Dropping v10 Firebase config
+// Plak hier jouw Firebase web app config. Gebruik GEEN import-regels.
 
 window.DROPPING_FIREBASE_CONFIG = {
   apiKey: "VUL_HIER_JE_API_KEY_IN",
@@ -12,4 +11,4 @@ window.DROPPING_FIREBASE_CONFIG = {
   appId: "VUL_HIER_JE_APP_ID_IN"
 };
 
-window.DROPPING_FIREBASE_PATH = "kamp2026";
+window.DROPPING_EVENT_ID = "kamp2026";

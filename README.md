@@ -1,53 +1,28 @@
-# Dropping app v8
+# Dropping app v10
 
-Volledig opgeschoonde PWA-versie met losse modules.
+Firebase-first versie met centrale database.
 
-## Wat is nieuw
+## Nieuwe functies
 
-- Stabielere projectstructuur.
-- Losse modules voor:
-  - afstandsberekening;
-  - opslag;
-  - Firebase;
-  - notificaties;
-  - GPS;
-  - deelnemersapp;
-  - beheerdashboard.
-- Tafeltennis-/scoreborddesign behouden.
-- Firebase live synchronisatie behouden.
-- Live groepsstatus op beheerpagina.
-- Reset via `index.html?reset=1`.
+- Firebase als primaire opslag onder `events/kamp2026`.
+- Live kaart voor de leiding.
+- Live groepsstatus.
+- Scorebord met punten.
+- Stopwatch per groep.
+- Berichten naar specifieke groepen.
+- Noodmelding naar alle groepen.
+- Groep op afstand doorschakelen naar volgende checkpoint.
+- Checkpoints activeren/deactiveren.
+- Punten per checkpoint.
+- Opdrachttekst per checkpoint.
+- Quizvraag + antwoord per checkpoint.
+- Import/export van volledige event-data.
 
-## Bestandsstructuur
+## Belangrijk
 
-```text
-index.html
-admin.html
-data.js
-firebase-config.js
-shared/
-  distance.js
-  storage.js
-  firebase-service.js
-  notifications.js
-app/
-  gps.js
-  participant.js
-admin/
-  dashboard.js
-styles/
-  theme.css
-assets/
-  icon.svg
-```
+Plak je Firebase config in `firebase-config.js`.
 
-## Firebase instellen
-
-Open `firebase-config.js` en vul jouw Firebase config in.
-
-Belangrijk: gebruik de compat-vorm die al in dit bestand staat. Gebruik dus geen `import`-regels.
-
-Voor testen in Realtime Database Rules:
+Gebruik voor testen in Firebase Realtime Database tijdelijk:
 
 ```json
 {
@@ -58,45 +33,12 @@ Voor testen in Realtime Database Rules:
 }
 ```
 
-Dit is handig om te testen, maar niet veilig voor definitief gebruik.
-
-## Uploaden naar GitHub
-
-Upload alle bestanden en mappen naar je GitHub Pages repository.
-
-Open daarna:
-
-```text
-index.html?reset=1
-```
+Upload alle bestanden en mappen naar GitHub Pages.
 
 ## Let op
 
-Een PWA kan op iPhone/Android niet betrouwbaar locatie blijven checken wanneer het scherm uit is. Voor echte achtergrondlocatie is een native app nodig.
+PWA's kunnen op iPhone/Android niet betrouwbaar locatie blijven volgen wanneer het scherm uit staat. Voor echte achtergrondlocatie is een native app nodig.
 
+## Foto-upload
 
-## v9 - Live kaart voor de leiding
-
-Deze versie voegt een live kaart toe aan `admin.html`.
-
-### Wat is nieuw
-
-- Live kaart op de beheerpagina.
-- Groepslocaties verschijnen als 🏓 markers.
-- Marker-kleur:
-  - oranje = onderweg;
-  - limegroen = checkpoint bereikt;
-  - blauw = route voltooid.
-- Popup met:
-  - groep;
-  - actief checkpoint;
-  - afstand;
-  - GPS-nauwkeurigheid;
-  - laatst gezien.
-- Knop “Toon alle groepen”.
-
-### Belangrijk
-
-Deelnemers zien nog steeds géén kaart, richting of coördinaten. Alleen de beheerpagina toont de live kaart.
-
-De kaart gebruikt OpenStreetMap/Leaflet via CDN. Internetverbinding is dus nodig op de beheerpagina.
+Foto-upload is nog niet ingebouwd. Dat vereist Firebase Storage plus strengere security rules. Dit kan als aparte volgende stap.

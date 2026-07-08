@@ -8,7 +8,7 @@
   <link rel="stylesheet" href="styles/theme.css">
 </head>
 <body class="admin">
-  <main class="app-shell">
+  <main class="app-shell wide">
     <header class="app-header admin-header">
       <div>
         <p class="kicker">Leiding dashboard</p>
@@ -21,72 +21,77 @@
       <h2>Live kaart</h2>
       <p class="muted">Alleen zichtbaar voor de leiding. Deelnemers zien geen kaart of richting.</p>
       <div id="leaderMap" class="leader-map"></div>
-      <div class="map-actions">
+      <div class="grid2">
         <button id="fitMapBtn" class="secondary">Toon alle groepen</button>
+        <button id="clearEmergencyBtn" class="secondary">Noodmelding uit</button>
       </div>
     </section>
 
     <section class="admin-card">
       <h2>Live groepsstatus</h2>
-      <p class="muted">Laatste bekende status van groepen die de app open hebben.</p>
-      <div id="liveStatusList">
-        <p class="muted">Nog geen live deelnemersstatus ontvangen.</p>
-      </div>
+      <div id="liveStatusList"><p class="muted">Nog geen live status.</p></div>
     </section>
 
     <section class="admin-card">
-      <h2>Wedstrijdinstellingen</h2>
-      <div class="grid2">
-        <div>
-          <label for="radiusInput">Radius checkpoint</label>
-          <input id="radiusInput" type="number" min="5" step="5">
-        </div>
-        <div>
-          <label for="intervalInput">Update-interval</label>
-          <input id="intervalInput" type="number" min="1" step="1">
-        </div>
+      <h2>Scorebord</h2>
+      <div id="scoreboardList"><p class="muted">Nog geen scores.</p></div>
+    </section>
+
+    <section class="admin-card">
+      <h2>Berichten & noodmelding</h2>
+      <label for="messageGroupSelect">Bericht naar groep</label>
+      <select id="messageGroupSelect"></select>
+      <textarea id="messageInput" rows="3" placeholder="Typ bericht aan deze groep"></textarea>
+      <button id="sendMessageBtn" class="primary">Stuur bericht</button>
+      <label for="emergencyInput">Noodmelding naar alle groepen</label>
+      <textarea id="emergencyInput" rows="3" placeholder="Bijv. Kom direct naar de verzamelplek"></textarea>
+      <button id="sendEmergencyBtn" class="danger">Stuur noodmelding</button>
+      <p id="messageStatus" class="status"></p>
+    </section>
+
+    <section class="admin-card">
+      <h2>Instellingen</h2>
+      <div class="grid3">
+        <div><label for="radiusInput">Radius checkpoint</label><input id="radiusInput" type="number" min="5" step="5"></div>
+        <div><label for="intervalInput">Update-interval</label><input id="intervalInput" type="number" min="1" step="1"></div>
+        <div><label for="arrivalCheckInput">Aankomstcheck sec.</label><input id="arrivalCheckInput" type="number" min="5" step="5"></div>
       </div>
-      <p class="muted">Advies: 50 meter en 5 minuten.</p>
     </section>
 
     <section class="admin-card">
       <h2>Teams</h2>
       <label for="groupSelect">Selecteer groep</label>
       <select id="groupSelect"></select>
-
-      <div class="grid2">
+      <div class="grid3">
         <button id="addGroupBtn" class="secondary">Nieuw team</button>
         <button id="deleteGroupBtn" class="danger">Verwijder team</button>
+        <button id="skipGroupBtn" class="secondary">Naar volgende checkpoint</button>
       </div>
     </section>
 
     <section class="admin-card">
-      <h2>Routekaart</h2>
-
+      <h2>Route bewerken</h2>
       <label for="groupNameInput">Groepsnaam</label>
       <input id="groupNameInput" placeholder="Bijv. Groep 1">
-
+      <div class="grid2">
+        <div><label for="groupScoreInput">Score</label><input id="groupScoreInput" type="number" step="1"></div>
+        <div><label for="groupActiveInput">Groep actief</label><select id="groupActiveInput"><option value="true">Actief</option><option value="false">Niet actief</option></select></div>
+      </div>
       <div id="checkpointEditor"></div>
-
       <button id="saveBtn" class="primary">Opslaan</button>
       <p id="saveStatus" class="status"></p>
     </section>
 
     <section class="admin-card">
       <h2>GPS-test</h2>
-      <p class="muted">Controleer of de coördinaten en afstandsberekening logisch zijn.</p>
       <button id="testDistanceBtn" class="secondary">Test afstand vanaf mijn huidige locatie</button>
       <p id="testDistanceResult" class="status"></p>
     </section>
 
     <section class="admin-card">
       <h2>Import / export</h2>
-      <p class="muted">Gebruik dit als backup of om dezelfde routes op een ander toestel te zetten.</p>
-      <div class="grid2">
-        <button id="exportBtn" class="secondary">Exporteren</button>
-        <button id="importBtn" class="secondary">Importeren</button>
-      </div>
-      <textarea id="jsonBox" rows="10" placeholder="Route-data verschijnt hier, of plak hier data om te importeren."></textarea>
+      <div class="grid2"><button id="exportBtn" class="secondary">Exporteren</button><button id="importBtn" class="secondary">Importeren</button></div>
+      <textarea id="jsonBox" rows="10" placeholder="Event-data verschijnt hier, of plak hier data om te importeren."></textarea>
     </section>
   </main>
 
@@ -94,11 +99,10 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
   <script src="firebase-config.js"></script>
-
   <script src="data.js"></script>
+  <script src="shared/utils.js"></script>
   <script src="shared/distance.js"></script>
-  <script src="shared/storage.js"></script>
-  <script src="shared/firebase-service.js"></script>
-  <script src="admin/dashboard.js"></script>
+  <script src="shared/firebase-v10.js"></script>
+  <script src="admin/admin-v10.js"></script>
 </body>
 </html>
