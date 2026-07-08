@@ -1,7 +1,7 @@
 window.DROPPING_FIREBASE_CONFIG = {
   apiKey: "AIzaSyCwrQOYOY6cnTRCtblbh6GJcySzzHEw_vo",
   authDomain: "nttb-kamp-dropping.firebaseapp.com",
-  databaseURL: "HIER_KOMT_JE_DATABASE_URL",
+  databaseURL: "https://console.firebase.google.com/project/nttb-kamp-dropping/database/nttb-kamp-dropping-default-rtdb/data/~2F",
   projectId: "nttb-kamp-dropping",
   storageBucket: "nttb-kamp-dropping.firebasestorage.app",
   messagingSenderId: "878956598499",
