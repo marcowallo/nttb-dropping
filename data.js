@@ -1,7 +1,7 @@
 const DEFAULT_DATA = {
   "settings": {
     "radiusMeters": 50,
-    "updateIntervalMinutes": 5
+    "updateIntervalMinutes": 1
   },
   "groups": [
     {
