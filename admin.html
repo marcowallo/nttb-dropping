@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Beheer - Dropping</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles/theme.css">
 </head>
 <body class="admin">
   <main class="app-shell">
@@ -15,6 +15,14 @@
       </div>
       <a href="index.html" class="header-action">App</a>
     </header>
+
+    <section class="admin-card">
+      <h2>Live groepsstatus</h2>
+      <p class="muted">Laatste bekende status van groepen die de app open hebben.</p>
+      <div id="liveStatusList">
+        <p class="muted">Nog geen live deelnemersstatus ontvangen.</p>
+      </div>
+    </section>
 
     <section class="admin-card">
       <h2>Wedstrijdinstellingen</h2>
@@ -75,8 +83,11 @@
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
   <script src="firebase-config.js"></script>
-  <script src="firebase-sync.js"></script>
+
   <script src="data.js"></script>
-  <script src="admin.js"></script>
+  <script src="shared/distance.js"></script>
+  <script src="shared/storage.js"></script>
+  <script src="shared/firebase-service.js"></script>
+  <script src="admin/dashboard.js"></script>
 </body>
 </html>

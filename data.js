@@ -1,7 +1,8 @@
-const DEFAULT_DATA = {
+window.DEFAULT_DROPPING_DATA = {
   settings: {
     radiusMeters: 50,
-    updateIntervalMinutes: 5
+    updateIntervalMinutes: 5,
+    arrivalCheckSeconds: 15
   },
   groups: [
     {
@@ -11,7 +12,7 @@ const DEFAULT_DATA = {
           name: "Checkpoint 1",
           lat: 52.3676,
           lng: 4.9041,
-          message: "Goed gedaan! Jullie hebben checkpoint 1 bereikt. Open de volgende opdracht."
+          message: "Goed gedaan! Jullie hebben checkpoint 1 bereikt."
         },
         {
           name: "Checkpoint 2",
