@@ -30,7 +30,6 @@
     groupNameInput: document.getElementById("groupNameInput"),
     groupScoreInput: document.getElementById("groupScoreInput"),
     groupActiveInput: document.getElementById("groupActiveInput"),
-    groupMapInput: document.getElementById("groupMapInput"),
     checkpointEditor: document.getElementById("checkpointEditor"),
     saveBtn: document.getElementById("saveBtn"),
     saveStatus: document.getElementById("saveStatus"),
@@ -118,8 +117,8 @@
 
   function normalizeTasks(checkpoint) {
     if (!checkpoint) return [];
-    if (Array.isArray(checkpoint.tasks)) return checkpoint.tasks.filter(Boolean);
-    if (checkpoint.tasks && typeof checkpoint.tasks === "object") return Object.values(checkpoint.tasks).filter(Boolean);
+    if (Array.isArray(checkpoint.tasks)) return [...checkpoint.tasks];
+    if (checkpoint.tasks && typeof checkpoint.tasks === "object") return Object.values(checkpoint.tasks);
     if (checkpoint.task) return [checkpoint.task];
     return [];
   }
@@ -130,7 +129,6 @@
     els.groupNameInput.value = group.name;
     els.groupScoreInput.value = Number(group.score || 0);
     els.groupActiveInput.value = String(group.active !== false);
-    els.groupMapInput.value = String(group.revealMap === true);
     els.checkpointEditor.innerHTML = "";
 
     selectedRoute().forEach((cp, index) => {
@@ -152,6 +150,11 @@
         <select data-index="${index}" data-field="active">
           <option value="true" ${cp.active !== false ? "selected" : ""}>Actief</option>
           <option value="false" ${cp.active === false ? "selected" : ""}>Niet actief</option>
+        </select>
+        <label>Checkpointkaart vrijgeven</label>
+        <select data-index="${index}" data-field="revealMap">
+          <option value="false" ${cp.revealMap === true ? "" : "selected"}>Niet zichtbaar</option>
+          <option value="true" ${cp.revealMap === true ? "selected" : ""}>Kaart zichtbaar bij dit checkpoint</option>
         </select>
         <label>Bericht bij aankomst</label>
         <textarea data-index="${index}" data-field="message" rows="3">${Utils.escapeHtml(cp.message || "")}</textarea>
@@ -208,8 +211,7 @@
       ...group,
       name: els.groupNameInput.value.trim() || group.name,
       score: Number(els.groupScoreInput.value || 0),
-      active: els.groupActiveInput.value === "true",
-      revealMap: els.groupMapInput.value === "true"
+      active: els.groupActiveInput.value === "true"
     };
     const route = selectedRoute();
 
@@ -217,8 +219,7 @@
       const cpIndex = Number(editor.dataset.taskEditor);
       if (!route[cpIndex]) return;
       route[cpIndex].tasks = Array.from(editor.querySelectorAll("[data-task-index]"))
-        .map(input => input.value.trim())
-        .filter(Boolean);
+        .map(input => input.value.trim());
       route[cpIndex].task = "";
     });
 
@@ -227,7 +228,7 @@
       const field = input.dataset.field;
       if (!route[index]) return;
       if (field === "lat" || field === "lng" || field === "points") route[index][field] = Number(input.value);
-      else if (field === "active") route[index][field] = input.value === "true";
+      else if (field === "active" || field === "revealMap") route[index][field] = input.value === "true";
       else route[index][field] = input.value.trim();
     });
   }
@@ -237,17 +238,26 @@
     readEditor();
     const cp = selectedRoute()[checkpointIndex];
     if (!cp) return;
+
     cp.tasks = normalizeTasks(cp);
     cp.tasks.push("");
+
     renderEditor();
+
+    const editor = els.checkpointEditor.querySelector(`[data-task-editor="${checkpointIndex}"]`);
+    const inputs = editor ? editor.querySelectorAll("[data-task-index]") : [];
+    const lastInput = inputs[inputs.length - 1];
+    if (lastInput) lastInput.focus();
   }
 
   function removeTask(checkpointIndex, taskIndex) {
     readEditor();
     const cp = selectedRoute()[checkpointIndex];
     if (!cp) return;
+
     cp.tasks = normalizeTasks(cp);
     cp.tasks.splice(taskIndex, 1);
+
     renderEditor();
   }
 
@@ -257,8 +267,8 @@
     const id = Utils.safeKey(`groep_${groups().length + 1}_${Date.now()}`);
     eventData.groups[id] = { id, name: `Groep ${groups().length + 1}`, color: "#8BFF4D", active: true, score: 0, currentCheckpointIndex: 0, startedAt: null, finishedAt: null };
     eventData.routes[id] = [
-      { id: Utils.uid("cp"), name: "Checkpoint 1", lat: 0, lng: 0, active: true, points: 10, message: "Checkpoint bereikt.", tasks: [], task: "", quizQuestion: "", quizAnswer: "" },
-      { id: Utils.uid("finish"), name: "Eindlocatie", lat: 0, lng: 0, active: true, points: 20, message: "Eindlocatie bereikt!", tasks: [], task: "", quizQuestion: "", quizAnswer: "" }
+      { id: Utils.uid("cp"), name: "Checkpoint 1", lat: 0, lng: 0, revealMap: false, active: true, points: 10, message: "Checkpoint bereikt.", tasks: [], task: "", quizQuestion: "", quizAnswer: "" },
+      { id: Utils.uid("finish"), name: "Eindlocatie", lat: 0, lng: 0, revealMap: false, active: true, points: 20, message: "Eindlocatie bereikt!", tasks: [], task: "", quizQuestion: "", quizAnswer: "" }
     ];
     selectedGroupId = id;
     if (Db.isEnabled()) await Db.setFullEvent(eventData);
@@ -274,7 +284,7 @@
   }
   function addCheckpoint() {
     readEditor();
-    eventData.routes[selectedGroupId].push({ id: Utils.uid("cp"), name: `Checkpoint ${selectedRoute().length + 1}`, lat: 0, lng: 0, active: true, points: 10, message: "Checkpoint bereikt.", tasks: [], task: "", quizQuestion: "", quizAnswer: "" });
+    eventData.routes[selectedGroupId].push({ id: Utils.uid("cp"), name: `Checkpoint ${selectedRoute().length + 1}`, lat: 0, lng: 0, revealMap: false, active: true, points: 10, message: "Checkpoint bereikt.", tasks: [], task: "", quizQuestion: "", quizAnswer: "" });
     render();
   }
   function removeCheckpoint(index) {

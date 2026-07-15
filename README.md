@@ -90,3 +90,14 @@ Nieuw:
   - grijs = uitgeschakeld checkpoint.
 
 De deelnemerskaart toont alleen checkpointmarkeringen en wordt alleen zichtbaar wanneer `Checkpointkaart vrijgeven` voor die groep op `Ja` staat.
+
+
+## v10.3 - Kaart per checkpoint en opdracht-editor hersteld
+
+- De checkpointkaart wordt nu per checkpoint ingesteld.
+- Op de beheerpagina staat bij ieder checkpoint:
+  - `Niet zichtbaar`;
+  - `Kaart zichtbaar bij dit checkpoint`.
+- De deelnemerskaart toont alleen het huidige checkpoint en opent ingezoomd.
+- De knop `Opdracht toevoegen` maakt nu daadwerkelijk een nieuw invoerveld.
+- Lege nieuwe opdrachtvelden blijven staan totdat je ze invult of verwijdert.

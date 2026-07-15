@@ -194,3 +194,9 @@ button,.quiet-link{appearance:none;width:100%;border:0;border-radius:18px;paddin
   .route-point { width: 18px; height: 18px; }
   .task-input-row { grid-template-columns: 1fr; }
 }
+
+
+.task-input-row:focus-within {
+  border-radius: 14px;
+  box-shadow: 0 0 0 3px rgba(45,156,255,.12);
+}

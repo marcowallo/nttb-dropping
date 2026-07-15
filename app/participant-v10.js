@@ -93,10 +93,9 @@
   }
 
   function renderParticipantMap() {
-    const group = selectedGroup();
-    const checkpoints = route().filter(cp => cp.active !== false && Number.isFinite(Number(cp.lat)) && Number.isFinite(Number(cp.lng)));
+    const checkpoint = activeCheckpoint();
 
-    if (!group?.revealMap || !checkpoints.length) {
+    if (!checkpoint?.revealMap || !Number.isFinite(Number(checkpoint.lat)) || !Number.isFinite(Number(checkpoint.lng))) {
       els.participantMapCard.classList.add("hidden");
       return;
     }
@@ -104,11 +103,13 @@
     els.participantMapCard.classList.remove("hidden");
 
     if (!window.L) return;
+
     if (!participantMapInstance) {
       participantMapInstance = L.map("participantMap", {
         zoomControl: true,
         attributionControl: true
       });
+
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution: "&copy; OpenStreetMap"
@@ -116,22 +117,25 @@
     }
 
     if (participantMapLayer) participantMapLayer.remove();
+
     participantMapLayer = L.featureGroup();
 
-    checkpoints.forEach((cp, index) => {
-      L.circleMarker([Number(cp.lat), Number(cp.lng)], {
-        radius: 8,
-        color: "#8BFF4D",
-        fillColor: "#2D9CFF",
-        fillOpacity: 0.9,
-        weight: 3
-      })
-      .bindTooltip(index === checkpoints.length - 1 ? "Eindlocatie" : `Checkpoint ${index + 1}`)
-      .addTo(participantMapLayer);
-    });
+    L.circleMarker([Number(checkpoint.lat), Number(checkpoint.lng)], {
+      radius: 10,
+      color: "#8BFF4D",
+      fillColor: "#2D9CFF",
+      fillOpacity: 0.95,
+      weight: 3
+    })
+    .bindTooltip(checkpoint.name || "Checkpoint", { permanent: false })
+    .addTo(participantMapLayer);
 
     participantMapLayer.addTo(participantMapInstance);
-    participantMapInstance.fitBounds(participantMapLayer.getBounds().pad(0.12), { maxZoom: 15 });
+    participantMapInstance.setView(
+      [Number(checkpoint.lat), Number(checkpoint.lng)],
+      15
+    );
+
     setTimeout(() => participantMapInstance.invalidateSize(), 150);
   }
 
