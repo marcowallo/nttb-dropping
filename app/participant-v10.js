@@ -141,10 +141,24 @@
     .addTo(participantMapLayer);
 
     participantMapLayer.addTo(participantMapInstance);
-    participantMapInstance.setView(
-      [Number(checkpoint.lat), Number(checkpoint.lng)],
-      15
+
+    // Toon ongeveer 200 meter rondom het checkpoint.
+    // 1 graad latitude is ongeveer 111.320 meter.
+    const lat = Number(checkpoint.lat);
+    const lng = Number(checkpoint.lng);
+    const radiusMeters = 200;
+    const latDelta = radiusMeters / 111320;
+    const lngDelta = radiusMeters / (111320 * Math.cos(lat * Math.PI / 180));
+
+    const bounds = L.latLngBounds(
+      [lat - latDelta, lng - lngDelta],
+      [lat + latDelta, lng + lngDelta]
     );
+
+    participantMapInstance.fitBounds(bounds, {
+      padding: [0, 0],
+      animate: false
+    });
 
     setTimeout(() => participantMapInstance.invalidateSize(), 150);
   }

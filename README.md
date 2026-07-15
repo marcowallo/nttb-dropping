@@ -114,3 +114,10 @@ De deelnemerskaart toont alleen checkpointmarkeringen en wordt alleen zichtbaar 
   - met dubbelklik of touch worden bediend.
 - De quizvelden en quizknop zijn verwijderd uit de deelnemers- en beheerpagina.
 - Quiz-achtige inhoud kan voortaan gewoon als normale opdracht worden toegevoegd.
+
+
+## v10.5 - Deelnemerskaart op 200 meter
+
+- De deelnemerskaart blijft volledig vergrendeld.
+- De kaart zoomt automatisch naar ongeveer 200 meter rondom het huidige checkpoint.
+- Slepen, zoomen en andere kaartbediening blijven uitgeschakeld.
