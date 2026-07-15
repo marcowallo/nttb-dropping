@@ -71,6 +71,15 @@
     </section>
 
     <section class="admin-card">
+      <h2>Deelnemersuitleg</h2>
+      <p class="muted">Deze tekst verschijnt op de eerste pagina voordat deelnemers hun groep kiezen.</p>
+      <label for="introTitleInput">Titel</label>
+      <input id="introTitleInput" placeholder="Bijv. Welkom bij de dropping">
+      <label for="introTextInput">Uitleg</label>
+      <textarea id="introTextInput" rows="7" placeholder="Schrijf hier de uitleg voor deelnemers"></textarea>
+    </section>
+
+    <section class="admin-card">
       <h2>Instellingen</h2>
       <div class="grid3">
         <div><label for="radiusInput">Radius checkpoint</label><input id="radiusInput" type="number" min="5" step="5"></div>
@@ -98,6 +107,11 @@
         <div><label for="groupScoreInput">Score</label><input id="groupScoreInput" type="number" step="1"></div>
         <div><label for="groupActiveInput">Groep actief</label><select id="groupActiveInput"><option value="true">Actief</option><option value="false">Niet actief</option></select></div>
       </div>
+      <label for="groupMapInput">Checkpointkaart vrijgeven</label>
+      <select id="groupMapInput">
+        <option value="false">Niet zichtbaar voor deelnemers</option>
+        <option value="true">Kaart zichtbaar voor deze groep</option>
+      </select>
       <div id="checkpointEditor"></div>
       <button id="saveBtn" class="primary">Opslaan</button>
       <p id="saveStatus" class="status"></p>

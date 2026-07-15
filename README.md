@@ -72,3 +72,21 @@ De knop **Reset volledige dropping** wist:
 - noodmeldingen.
 
 Routes, checkpoints en instellingen blijven behouden.
+
+
+## v10.2 - Intro, meerdere opdrachten en verdiende kaart
+
+Nieuw:
+
+- aparte deelnemersuitleg voordat een groep wordt gekozen;
+- titel en uitleg aanpasbaar via de beheerpagina;
+- meerdere opdrachten per checkpoint;
+- opdrachten toevoegen en verwijderen via de beheerpagina;
+- checkpointkaart per groep vrijgeven via beheer;
+- gekleurde voortgangspunten:
+  - groen = afgerond;
+  - oranje = huidig checkpoint;
+  - blauw = nog te gaan;
+  - grijs = uitgeschakeld checkpoint.
+
+De deelnemerskaart toont alleen checkpointmarkeringen en wordt alleen zichtbaar wanneer `Checkpointkaart vrijgeven` voor die groep op `Ja` staat.

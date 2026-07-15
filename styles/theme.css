@@ -70,3 +70,127 @@ button,.quiet-link{appearance:none;width:100%;border:0;border-radius:18px;paddin
 .danger-zone h2 {
   color: #ff8aa0;
 }
+
+
+.intro-text {
+  text-align: left;
+  margin: 18px 0;
+  color: var(--text);
+  line-height: 1.65;
+}
+
+.intro-text p {
+  margin-bottom: 12px;
+}
+
+.route-points {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 15px;
+  margin: 20px 0 14px;
+}
+
+.route-point {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #4B5675;
+  border: 3px solid rgba(255,255,255,.18);
+  box-shadow: 0 0 0 5px rgba(255,255,255,.025);
+  transition: transform .25s ease, background .25s ease, box-shadow .25s ease;
+}
+
+.route-point.done {
+  background: var(--lime);
+  border-color: rgba(139,255,77,.62);
+  box-shadow: 0 0 18px rgba(139,255,77,.35);
+}
+
+.route-point.active {
+  background: var(--orange);
+  border-color: rgba(255,159,28,.68);
+  box-shadow: 0 0 20px rgba(255,159,28,.42);
+  transform: scale(1.25);
+}
+
+.route-point.todo {
+  background: var(--blue);
+  border-color: rgba(45,156,255,.5);
+  opacity: .58;
+}
+
+.route-point.inactive {
+  background: #677086;
+  border-color: rgba(255,255,255,.16);
+  opacity: .25;
+}
+
+.task-list {
+  display: grid;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.task-item {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: start;
+  padding: 13px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.05);
+  border: 1px solid var(--line);
+}
+
+.task-item p {
+  margin: 3px 0 0;
+  line-height: 1.5;
+}
+
+.task-number {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: linear-gradient(135deg, var(--lime), var(--blue2));
+  color: #07101f;
+  font-weight: 950;
+}
+
+.task-editor {
+  margin-top: 14px;
+  padding: 13px;
+  border-radius: 18px;
+  background: rgba(255,255,255,.035);
+  border: 1px solid var(--line);
+}
+
+.task-input-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.task-input-row input {
+  margin-bottom: 0;
+}
+
+.participant-map {
+  width: 100%;
+  height: min(52vh, 420px);
+  min-height: 280px;
+  border-radius: 22px;
+  overflow: hidden;
+  border: 1px solid var(--line);
+  background: #111A36;
+}
+
+@media(max-width:700px) {
+  .route-points { gap: 10px; }
+  .route-point { width: 18px; height: 18px; }
+  .task-input-row { grid-template-columns: 1fr; }
+}

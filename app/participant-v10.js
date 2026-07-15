@@ -2,6 +2,10 @@
   const LOCAL_STATE_KEY = "dropping_v10_state";
 
   const els = {
+    introCard: document.getElementById("introCard"),
+    introTitle: document.getElementById("introTitle"),
+    introText: document.getElementById("introText"),
+    continueBtn: document.getElementById("continueBtn"),
     setupCard: document.getElementById("setupCard"),
     routeCard: document.getElementById("routeCard"),
     groupSelect: document.getElementById("groupSelect"),
@@ -20,7 +24,7 @@
     countdownText: document.getElementById("countdownText"),
     updateText: document.getElementById("updateText"),
     taskCard: document.getElementById("taskCard"),
-    taskText: document.getElementById("taskText"),
+    taskList: document.getElementById("taskList"),
     quizBox: document.getElementById("quizBox"),
     quizQuestionLabel: document.getElementById("quizQuestionLabel"),
     quizAnswerInput: document.getElementById("quizAnswerInput"),
@@ -31,7 +35,9 @@
     nextBtn: document.getElementById("nextBtn"),
     locationText: document.getElementById("locationText"),
     messageBanner: document.getElementById("messageBanner"),
-    emergencyBanner: document.getElementById("emergencyBanner")
+    emergencyBanner: document.getElementById("emergencyBanner"),
+    participantMapCard: document.getElementById("participantMapCard"),
+    participantMap: document.getElementById("participantMap")
   };
 
   let eventData = Utils.normalizeEvent(window.DEFAULT_EVENT_DATA);
@@ -42,6 +48,8 @@
   let lastArrivalKey = null;
   let currentMessageId = null;
   let currentEmergencyAt = null;
+  let participantMapInstance = null;
+  let participantMapLayer = null;
   let watchId = null, intervalTimer = null, countdownTimer = null, arrivalTimer = null, stopwatchTimer = null;
 
   function getState() { try { return JSON.parse(localStorage.getItem(LOCAL_STATE_KEY) || "null"); } catch { return null; } }
@@ -63,6 +71,68 @@
     els.gpsBadge.classList.toggle("gps-ok", ok);
     els.gpsBadge.classList.toggle("gps-error", !ok);
     els.gpsBadge.title = text;
+  }
+
+
+  function renderIntro() {
+    els.introTitle.textContent = eventData.settings.participantIntroTitle || "Welkom bij de dropping";
+    const raw = eventData.settings.participantIntroText || "";
+    els.introText.innerHTML = raw
+      .split(/\n+/)
+      .filter(Boolean)
+      .map(line => `<p>${Utils.escapeHtml(line)}</p>`)
+      .join("");
+  }
+
+  function routeTasks(checkpoint) {
+    if (!checkpoint) return [];
+    if (Array.isArray(checkpoint.tasks)) return checkpoint.tasks.filter(Boolean);
+    if (checkpoint.tasks && typeof checkpoint.tasks === "object") return Object.values(checkpoint.tasks).filter(Boolean);
+    if (checkpoint.task) return [checkpoint.task];
+    return [];
+  }
+
+  function renderParticipantMap() {
+    const group = selectedGroup();
+    const checkpoints = route().filter(cp => cp.active !== false && Number.isFinite(Number(cp.lat)) && Number.isFinite(Number(cp.lng)));
+
+    if (!group?.revealMap || !checkpoints.length) {
+      els.participantMapCard.classList.add("hidden");
+      return;
+    }
+
+    els.participantMapCard.classList.remove("hidden");
+
+    if (!window.L) return;
+    if (!participantMapInstance) {
+      participantMapInstance = L.map("participantMap", {
+        zoomControl: true,
+        attributionControl: true
+      });
+      L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+        attribution: "&copy; OpenStreetMap"
+      }).addTo(participantMapInstance);
+    }
+
+    if (participantMapLayer) participantMapLayer.remove();
+    participantMapLayer = L.featureGroup();
+
+    checkpoints.forEach((cp, index) => {
+      L.circleMarker([Number(cp.lat), Number(cp.lng)], {
+        radius: 8,
+        color: "#8BFF4D",
+        fillColor: "#2D9CFF",
+        fillOpacity: 0.9,
+        weight: 3
+      })
+      .bindTooltip(index === checkpoints.length - 1 ? "Eindlocatie" : `Checkpoint ${index + 1}`)
+      .addTo(participantMapLayer);
+    });
+
+    participantMapLayer.addTo(participantMapInstance);
+    participantMapInstance.fitBounds(participantMapLayer.getBounds().pad(0.12), { maxZoom: 15 });
+    setTimeout(() => participantMapInstance.invalidateSize(), 150);
   }
 
   function populateGroups() {
@@ -95,23 +165,34 @@
     els.pongProgress.innerHTML = "";
     cps.forEach((cp, i) => {
       const dot = document.createElement("span");
-      dot.className = i < idx ? "pong-dot done" : i === idx ? "pong-dot active" : "pong-dot todo";
-      dot.textContent = i === cps.length - 1 ? "🏁" : "🏓";
+      dot.className = i < idx ? "route-point done" : i === idx ? "route-point active" : "route-point todo";
+      dot.setAttribute("aria-label", i === cps.length - 1 ? "Eindlocatie" : `Checkpoint ${i + 1}`);
       if (cp.active === false) dot.classList.add("inactive");
       els.pongProgress.appendChild(dot);
     });
 
     renderTask(checkpoint);
     renderMessages();
+    renderParticipantMap();
   }
 
   function renderTask(checkpoint) {
-    if (!checkpoint || (!checkpoint.task && !checkpoint.quizQuestion)) {
+    const tasks = routeTasks(checkpoint);
+    if (!checkpoint || (!tasks.length && !checkpoint.quizQuestion)) {
       els.taskCard.classList.add("hidden");
       return;
     }
+
     els.taskCard.classList.remove("hidden");
-    els.taskText.textContent = checkpoint.task || "";
+    els.taskList.innerHTML = "";
+
+    tasks.forEach((task, index) => {
+      const item = document.createElement("div");
+      item.className = "task-item";
+      item.innerHTML = `<span class="task-number">${index + 1}</span><p>${Utils.escapeHtml(task)}</p>`;
+      els.taskList.appendChild(item);
+    });
+
     if (checkpoint.quizQuestion) {
       els.quizBox.classList.remove("hidden");
       els.quizQuestionLabel.textContent = checkpoint.quizQuestion;
@@ -315,15 +396,22 @@
     } else {
       eventData = Utils.normalizeEvent(window.DEFAULT_EVENT_DATA);
     }
+    renderIntro();
     populateGroups();
     const st = getState();
     if (st?.groupId && eventData.groups[st.groupId]) {
       selectedGroupId = st.groupId;
+      els.introCard.classList.add("hidden");
+      els.setupCard.classList.add("hidden");
       renderRoute();
       startGps();
     }
   }
 
+  els.continueBtn.addEventListener("click", () => {
+    els.introCard.classList.add("hidden");
+    els.setupCard.classList.remove("hidden");
+  });
   els.startBtn.addEventListener("click", start);
   els.resetBtn.addEventListener("click", reset);
   els.nextBtn.addEventListener("click", nextCheckpoint);

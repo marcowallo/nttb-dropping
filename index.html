@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
   <title>Dropping</title>
   <link rel="manifest" href="manifest.json">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
   <link rel="stylesheet" href="styles/theme.css">
 </head>
 <body class="participant">
@@ -17,11 +18,18 @@
       <span class="gps-dot gps-error" id="gpsBadge" title="GPS status">📡</span>
     </header>
 
-    <section class="start-card" id="setupCard">
+    <section class="start-card" id="introCard">
       <div class="brand-mark">🏓</div>
+      <p class="kicker">Voor deelnemers</p>
+      <h2 id="introTitle">Welkom bij de dropping</h2>
+      <div id="introText" class="intro-text"></div>
+      <button id="continueBtn" class="primary">Ik heb de uitleg gelezen</button>
+    </section>
+
+    <section class="start-card hidden" id="setupCard">
       <p class="kicker">Selecteer team</p>
       <h2>Start de route</h2>
-      <p class="muted">Jullie krijgen alleen afstandsupdates. Geen richting, geen kaart, geen coördinaten.</p>
+      <p class="muted">Jullie krijgen alleen de informatie die voor jullie groep is vrijgegeven.</p>
       <label for="groupSelect">Groep</label>
       <select id="groupSelect"></select>
       <button id="startBtn" class="primary">Start wedstrijd</button>
@@ -41,7 +49,7 @@
           </div>
           <button id="resetBtn" class="reset-btn">Reset</button>
         </div>
-        <div id="pongProgress" class="pong-progress"></div>
+        <div id="pongProgress" class="route-points"></div>
         <div class="progress-meta">
           <span id="stepText">Checkpoint 1 van 4</span>
           <span id="stopwatchText">00:00</span>
@@ -60,8 +68,8 @@
       </section>
 
       <section id="taskCard" class="details-card hidden">
-        <p class="kicker">Opdracht</p>
-        <p id="taskText"></p>
+        <p class="kicker">Opdrachten</p>
+        <div id="taskList" class="task-list"></div>
         <div id="quizBox" class="hidden">
           <label id="quizQuestionLabel" for="quizAnswerInput">Quizantwoord</label>
           <input id="quizAnswerInput" placeholder="Vul antwoord in">
@@ -84,6 +92,13 @@
         </div>
       </section>
 
+      <section id="participantMapCard" class="details-card hidden">
+        <p class="kicker">Verdiende kaart</p>
+        <h2>Checkpointkaart</h2>
+        <p class="muted">Deze kaart is door de leiding vrijgegeven. De kaart toont alleen de omgeving van de checkpoints.</p>
+        <div id="participantMap" class="participant-map"></div>
+      </section>
+
       <section class="details-card">
         <details>
           <summary>GPS-details</summary>
@@ -94,6 +109,7 @@
     </section>
   </main>
 
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.5/firebase-database-compat.js"></script>
   <script src="firebase-config.js"></script>

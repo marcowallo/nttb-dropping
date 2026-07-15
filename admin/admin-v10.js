@@ -18,6 +18,8 @@
     sendEmergencyBtn: document.getElementById("sendEmergencyBtn"),
     clearEmergencyBtn: document.getElementById("clearEmergencyBtn"),
     messageStatus: document.getElementById("messageStatus"),
+    introTitleInput: document.getElementById("introTitleInput"),
+    introTextInput: document.getElementById("introTextInput"),
     radiusInput: document.getElementById("radiusInput"),
     intervalInput: document.getElementById("intervalInput"),
     arrivalCheckInput: document.getElementById("arrivalCheckInput"),
@@ -28,6 +30,7 @@
     groupNameInput: document.getElementById("groupNameInput"),
     groupScoreInput: document.getElementById("groupScoreInput"),
     groupActiveInput: document.getElementById("groupActiveInput"),
+    groupMapInput: document.getElementById("groupMapInput"),
     checkpointEditor: document.getElementById("checkpointEditor"),
     saveBtn: document.getElementById("saveBtn"),
     saveStatus: document.getElementById("saveStatus"),
@@ -86,6 +89,8 @@
 
   function render() {
     if (!selectedGroupId || !eventData.groups[selectedGroupId]) selectedGroupId = groups()[0]?.id || null;
+    els.introTitleInput.value = eventData.settings.participantIntroTitle || "";
+    els.introTextInput.value = eventData.settings.participantIntroText || "";
     els.radiusInput.value = eventData.settings.radiusMeters;
     els.intervalInput.value = eventData.settings.updateIntervalMinutes;
     els.arrivalCheckInput.value = eventData.settings.arrivalCheckSeconds;
@@ -110,12 +115,22 @@
     }
   }
 
+
+  function normalizeTasks(checkpoint) {
+    if (!checkpoint) return [];
+    if (Array.isArray(checkpoint.tasks)) return checkpoint.tasks.filter(Boolean);
+    if (checkpoint.tasks && typeof checkpoint.tasks === "object") return Object.values(checkpoint.tasks).filter(Boolean);
+    if (checkpoint.task) return [checkpoint.task];
+    return [];
+  }
+
   function renderEditor() {
     const group = selectedGroup();
     if (!group) return;
     els.groupNameInput.value = group.name;
     els.groupScoreInput.value = Number(group.score || 0);
     els.groupActiveInput.value = String(group.active !== false);
+    els.groupMapInput.value = String(group.revealMap === true);
     els.checkpointEditor.innerHTML = "";
 
     selectedRoute().forEach((cp, index) => {
@@ -140,8 +155,20 @@
         </select>
         <label>Bericht bij aankomst</label>
         <textarea data-index="${index}" data-field="message" rows="3">${Utils.escapeHtml(cp.message || "")}</textarea>
-        <label>Opdrachttekst</label>
-        <textarea data-index="${index}" data-field="task" rows="3">${Utils.escapeHtml(cp.task || "")}</textarea>
+        <div class="task-editor" data-task-editor="${index}">
+          <div class="checkpoint-head">
+            <label>Opdrachten</label>
+            <button type="button" class="tiny secondary add-task" data-index="${index}">Opdracht toevoegen</button>
+          </div>
+          <div class="task-input-list">
+            ${normalizeTasks(cp).map((task, taskIndex) => `
+              <div class="task-input-row">
+                <input data-task-index="${taskIndex}" value="${Utils.escapeHtml(task)}" placeholder="Opdracht ${taskIndex + 1}">
+                <button type="button" class="tiny danger remove-task" data-index="${index}" data-task-index="${taskIndex}">Verwijder</button>
+              </div>
+            `).join("")}
+          </div>
+        </div>
         <label>Quizvraag</label>
         <input data-index="${index}" data-field="quizQuestion" value="${Utils.escapeHtml(cp.quizQuestion || "")}">
         <label>Quizantwoord</label>
@@ -159,11 +186,21 @@
     els.checkpointEditor.querySelectorAll(".remove-cp").forEach(btn => {
       btn.addEventListener("click", () => removeCheckpoint(Number(btn.dataset.index)));
     });
+
+    els.checkpointEditor.querySelectorAll(".add-task").forEach(btn => {
+      btn.addEventListener("click", () => addTask(Number(btn.dataset.index)));
+    });
+
+    els.checkpointEditor.querySelectorAll(".remove-task").forEach(btn => {
+      btn.addEventListener("click", () => removeTask(Number(btn.dataset.index), Number(btn.dataset.taskIndex)));
+    });
   }
 
   function readEditor() {
     const group = selectedGroup();
     if (!group) return;
+    eventData.settings.participantIntroTitle = els.introTitleInput.value.trim() || "Welkom bij de dropping";
+    eventData.settings.participantIntroText = els.introTextInput.value.trim();
     eventData.settings.radiusMeters = Math.max(5, Number(els.radiusInput.value || 50));
     eventData.settings.updateIntervalMinutes = Math.max(1, Number(els.intervalInput.value || 5));
     eventData.settings.arrivalCheckSeconds = Math.max(5, Number(els.arrivalCheckInput.value || 15));
@@ -171,9 +208,20 @@
       ...group,
       name: els.groupNameInput.value.trim() || group.name,
       score: Number(els.groupScoreInput.value || 0),
-      active: els.groupActiveInput.value === "true"
+      active: els.groupActiveInput.value === "true",
+      revealMap: els.groupMapInput.value === "true"
     };
     const route = selectedRoute();
+
+    els.checkpointEditor.querySelectorAll("[data-task-editor]").forEach(editor => {
+      const cpIndex = Number(editor.dataset.taskEditor);
+      if (!route[cpIndex]) return;
+      route[cpIndex].tasks = Array.from(editor.querySelectorAll("[data-task-index]"))
+        .map(input => input.value.trim())
+        .filter(Boolean);
+      route[cpIndex].task = "";
+    });
+
     els.checkpointEditor.querySelectorAll("[data-field]").forEach(input => {
       const index = Number(input.dataset.index);
       const field = input.dataset.field;
@@ -184,14 +232,33 @@
     });
   }
 
+
+  function addTask(checkpointIndex) {
+    readEditor();
+    const cp = selectedRoute()[checkpointIndex];
+    if (!cp) return;
+    cp.tasks = normalizeTasks(cp);
+    cp.tasks.push("");
+    renderEditor();
+  }
+
+  function removeTask(checkpointIndex, taskIndex) {
+    readEditor();
+    const cp = selectedRoute()[checkpointIndex];
+    if (!cp) return;
+    cp.tasks = normalizeTasks(cp);
+    cp.tasks.splice(taskIndex, 1);
+    renderEditor();
+  }
+
   async function saveAll() { readEditor(); if (Db.isEnabled()) await Db.setFullEvent(eventData); flash("Opgeslagen."); render(); }
   async function addGroup() {
     readEditor();
     const id = Utils.safeKey(`groep_${groups().length + 1}_${Date.now()}`);
     eventData.groups[id] = { id, name: `Groep ${groups().length + 1}`, color: "#8BFF4D", active: true, score: 0, currentCheckpointIndex: 0, startedAt: null, finishedAt: null };
     eventData.routes[id] = [
-      { id: Utils.uid("cp"), name: "Checkpoint 1", lat: 0, lng: 0, active: true, points: 10, message: "Checkpoint bereikt.", task: "", quizQuestion: "", quizAnswer: "" },
-      { id: Utils.uid("finish"), name: "Eindlocatie", lat: 0, lng: 0, active: true, points: 20, message: "Eindlocatie bereikt!", task: "", quizQuestion: "", quizAnswer: "" }
+      { id: Utils.uid("cp"), name: "Checkpoint 1", lat: 0, lng: 0, active: true, points: 10, message: "Checkpoint bereikt.", tasks: [], task: "", quizQuestion: "", quizAnswer: "" },
+      { id: Utils.uid("finish"), name: "Eindlocatie", lat: 0, lng: 0, active: true, points: 20, message: "Eindlocatie bereikt!", tasks: [], task: "", quizQuestion: "", quizAnswer: "" }
     ];
     selectedGroupId = id;
     if (Db.isEnabled()) await Db.setFullEvent(eventData);
@@ -207,7 +274,7 @@
   }
   function addCheckpoint() {
     readEditor();
-    eventData.routes[selectedGroupId].push({ id: Utils.uid("cp"), name: `Checkpoint ${selectedRoute().length + 1}`, lat: 0, lng: 0, active: true, points: 10, message: "Checkpoint bereikt.", task: "", quizQuestion: "", quizAnswer: "" });
+    eventData.routes[selectedGroupId].push({ id: Utils.uid("cp"), name: `Checkpoint ${selectedRoute().length + 1}`, lat: 0, lng: 0, active: true, points: 10, message: "Checkpoint bereikt.", tasks: [], task: "", quizQuestion: "", quizAnswer: "" });
     render();
   }
   function removeCheckpoint(index) {
