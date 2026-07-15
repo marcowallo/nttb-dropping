@@ -101,3 +101,16 @@ De deelnemerskaart toont alleen checkpointmarkeringen en wordt alleen zichtbaar 
 - De deelnemerskaart toont alleen het huidige checkpoint en opent ingezoomd.
 - De knop `Opdracht toevoegen` maakt nu daadwerkelijk een nieuw invoerveld.
 - Lege nieuwe opdrachtvelden blijven staan totdat je ze invult of verwijdert.
+
+
+## v10.4 - Opdrachten verwijderen, kaart vergrendeld en quiz verwijderd
+
+- De verwijderknop voor opdrachten werkt weer correct.
+- De knop werd eerder per ongeluk als opdrachtveld ingelezen; dat is hersteld.
+- De deelnemerskaart kan niet meer:
+  - worden versleept;
+  - worden ingezoomd;
+  - worden uitgezoomd;
+  - met dubbelklik of touch worden bediend.
+- De quizvelden en quizknop zijn verwijderd uit de deelnemers- en beheerpagina.
+- Quiz-achtige inhoud kan voortaan gewoon als normale opdracht worden toegevoegd.

@@ -200,3 +200,19 @@ button,.quiet-link{appearance:none;width:100%;border:0;border-radius:18px;paddin
   border-radius: 14px;
   box-shadow: 0 0 0 3px rgba(45,156,255,.12);
 }
+
+
+.participant-map {
+  cursor: default;
+  touch-action: pan-y;
+  user-select: none;
+}
+
+.participant-map .leaflet-control-zoom {
+  display: none !important;
+}
+
+.participant-map .leaflet-interactive,
+.participant-map .leaflet-container {
+  cursor: default !important;
+}

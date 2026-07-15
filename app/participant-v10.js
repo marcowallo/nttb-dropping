@@ -25,11 +25,6 @@
     updateText: document.getElementById("updateText"),
     taskCard: document.getElementById("taskCard"),
     taskList: document.getElementById("taskList"),
-    quizBox: document.getElementById("quizBox"),
-    quizQuestionLabel: document.getElementById("quizQuestionLabel"),
-    quizAnswerInput: document.getElementById("quizAnswerInput"),
-    quizCheckBtn: document.getElementById("quizCheckBtn"),
-    quizStatus: document.getElementById("quizStatus"),
     arrivalOverlay: document.getElementById("arrivalOverlay"),
     checkpointMessage: document.getElementById("checkpointMessage"),
     nextBtn: document.getElementById("nextBtn"),
@@ -106,14 +101,29 @@
 
     if (!participantMapInstance) {
       participantMapInstance = L.map("participantMap", {
-        zoomControl: true,
-        attributionControl: true
+        zoomControl: false,
+        attributionControl: true,
+        dragging: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        touchZoom: false,
+        boxZoom: false,
+        keyboard: false,
+        tap: false
       });
 
       L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
         attribution: "&copy; OpenStreetMap"
       }).addTo(participantMapInstance);
+
+      participantMapInstance.dragging.disable();
+      participantMapInstance.scrollWheelZoom.disable();
+      participantMapInstance.doubleClickZoom.disable();
+      participantMapInstance.touchZoom.disable();
+      participantMapInstance.boxZoom.disable();
+      participantMapInstance.keyboard.disable();
+      if (participantMapInstance.tap) participantMapInstance.tap.disable();
     }
 
     if (participantMapLayer) participantMapLayer.remove();
@@ -182,7 +192,8 @@
 
   function renderTask(checkpoint) {
     const tasks = routeTasks(checkpoint);
-    if (!checkpoint || (!tasks.length && !checkpoint.quizQuestion)) {
+
+    if (!checkpoint || !tasks.length) {
       els.taskCard.classList.add("hidden");
       return;
     }
@@ -196,15 +207,6 @@
       item.innerHTML = `<span class="task-number">${index + 1}</span><p>${Utils.escapeHtml(task)}</p>`;
       els.taskList.appendChild(item);
     });
-
-    if (checkpoint.quizQuestion) {
-      els.quizBox.classList.remove("hidden");
-      els.quizQuestionLabel.textContent = checkpoint.quizQuestion;
-      els.quizStatus.textContent = "";
-      els.quizAnswerInput.value = "";
-    } else {
-      els.quizBox.classList.add("hidden");
-    }
   }
 
   function renderMessages() {
@@ -419,13 +421,6 @@
   els.startBtn.addEventListener("click", start);
   els.resetBtn.addEventListener("click", reset);
   els.nextBtn.addEventListener("click", nextCheckpoint);
-  els.quizCheckBtn.addEventListener("click", () => {
-    const cp = activeCheckpoint();
-    if (!cp?.quizAnswer) return;
-    const ok = els.quizAnswerInput.value.trim().toLowerCase() === String(cp.quizAnswer).trim().toLowerCase();
-    els.quizStatus.textContent = ok ? "Goed antwoord!" : "Nog niet goed, probeer opnieuw.";
-    if (ok) Notify.show("Goed antwoord!", "Quiz voltooid.", "arrival");
-  });
   document.addEventListener("visibilitychange", () => {
     if (!document.hidden && selectedGroupId && nextUpdateAt && Date.now() >= nextUpdateAt) requestLocation(true);
   });

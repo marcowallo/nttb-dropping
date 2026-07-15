@@ -172,10 +172,6 @@
             `).join("")}
           </div>
         </div>
-        <label>Quizvraag</label>
-        <input data-index="${index}" data-field="quizQuestion" value="${Utils.escapeHtml(cp.quizQuestion || "")}">
-        <label>Quizantwoord</label>
-        <input data-index="${index}" data-field="quizAnswer" value="${Utils.escapeHtml(cp.quizAnswer || "")}">
       `;
       els.checkpointEditor.appendChild(block);
     });
@@ -191,11 +187,19 @@
     });
 
     els.checkpointEditor.querySelectorAll(".add-task").forEach(btn => {
-      btn.addEventListener("click", () => addTask(Number(btn.dataset.index)));
+      btn.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        addTask(Number(btn.dataset.index));
+      });
     });
 
     els.checkpointEditor.querySelectorAll(".remove-task").forEach(btn => {
-      btn.addEventListener("click", () => removeTask(Number(btn.dataset.index), Number(btn.dataset.taskIndex)));
+      btn.addEventListener("click", event => {
+        event.preventDefault();
+        event.stopPropagation();
+        removeTask(Number(btn.dataset.index), Number(btn.dataset.taskIndex));
+      });
     });
   }
 
@@ -218,7 +222,7 @@
     els.checkpointEditor.querySelectorAll("[data-task-editor]").forEach(editor => {
       const cpIndex = Number(editor.dataset.taskEditor);
       if (!route[cpIndex]) return;
-      route[cpIndex].tasks = Array.from(editor.querySelectorAll("[data-task-index]"))
+      route[cpIndex].tasks = Array.from(editor.querySelectorAll("input[data-task-index]"))
         .map(input => input.value.trim());
       route[cpIndex].task = "";
     });
@@ -245,7 +249,7 @@
     renderEditor();
 
     const editor = els.checkpointEditor.querySelector(`[data-task-editor="${checkpointIndex}"]`);
-    const inputs = editor ? editor.querySelectorAll("[data-task-index]") : [];
+    const inputs = editor ? editor.querySelectorAll("input[data-task-index]") : [];
     const lastInput = inputs[inputs.length - 1];
     if (lastInput) lastInput.focus();
   }
@@ -267,8 +271,8 @@
     const id = Utils.safeKey(`groep_${groups().length + 1}_${Date.now()}`);
     eventData.groups[id] = { id, name: `Groep ${groups().length + 1}`, color: "#8BFF4D", active: true, score: 0, currentCheckpointIndex: 0, startedAt: null, finishedAt: null };
     eventData.routes[id] = [
-      { id: Utils.uid("cp"), name: "Checkpoint 1", lat: 0, lng: 0, revealMap: false, active: true, points: 10, message: "Checkpoint bereikt.", tasks: [], task: "", quizQuestion: "", quizAnswer: "" },
-      { id: Utils.uid("finish"), name: "Eindlocatie", lat: 0, lng: 0, revealMap: false, active: true, points: 20, message: "Eindlocatie bereikt!", tasks: [], task: "", quizQuestion: "", quizAnswer: "" }
+      { id: Utils.uid("cp"), name: "Checkpoint 1", lat: 0, lng: 0, revealMap: false, active: true, points: 10, message: "Checkpoint bereikt.", tasks: [], task: "" },
+      { id: Utils.uid("finish"), name: "Eindlocatie", lat: 0, lng: 0, revealMap: false, active: true, points: 20, message: "Eindlocatie bereikt!", tasks: [], task: "" }
     ];
     selectedGroupId = id;
     if (Db.isEnabled()) await Db.setFullEvent(eventData);
@@ -284,7 +288,7 @@
   }
   function addCheckpoint() {
     readEditor();
-    eventData.routes[selectedGroupId].push({ id: Utils.uid("cp"), name: `Checkpoint ${selectedRoute().length + 1}`, lat: 0, lng: 0, revealMap: false, active: true, points: 10, message: "Checkpoint bereikt.", tasks: [], task: "", quizQuestion: "", quizAnswer: "" });
+    eventData.routes[selectedGroupId].push({ id: Utils.uid("cp"), name: `Checkpoint ${selectedRoute().length + 1}`, lat: 0, lng: 0, revealMap: false, active: true, points: 10, message: "Checkpoint bereikt.", tasks: [], task: "" });
     render();
   }
   function removeCheckpoint(index) {
