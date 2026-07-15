@@ -105,7 +105,32 @@ window.Db = (() => {
   async function setEmergency(active, message = "") {
     await ref("emergency").set({ active, message, updatedAt: Date.now() });
   }
+
+  async function resetEvent() {
+    if (!enabled) throw new Error("Firebase niet actief.");
+
+    const groupsSnapshot = await ref("groups").get();
+    const groups = groupsSnapshot.val() || {};
+    const updates = {};
+
+    Object.keys(groups).forEach(groupId => {
+      updates[`groups/${groupId}/score`] = 0;
+      updates[`groups/${groupId}/currentCheckpointIndex`] = 0;
+      updates[`groups/${groupId}/startedAt`] = null;
+      updates[`groups/${groupId}/finishedAt`] = null;
+    });
+
+    updates["live"] = null;
+    updates["messages"] = null;
+    updates["emergency"] = { active: false, message: "", updatedAt: Date.now() };
+    updates["meta/updatedAt"] = Date.now();
+    updates["meta/lastResetAt"] = Date.now();
+
+    await rootRef.update(updates);
+    return Object.keys(groups).length;
+  }
+
   async function touch() { await ref("meta/updatedAt").set(Date.now()); }
 
-  return { init, isEnabled, bootstrap, getEvent, onEvent, onLive, setGroup, removeGroup, setFullEvent, updateLive, sendMessage, setEmergency };
+  return { init, isEnabled, bootstrap, getEvent, onEvent, onLive, setGroup, removeGroup, setFullEvent, updateLive, sendMessage, setEmergency, resetEvent };
 })();

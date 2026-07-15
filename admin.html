@@ -8,7 +8,20 @@
   <link rel="stylesheet" href="styles/theme.css">
 </head>
 <body class="admin">
-  <main class="app-shell wide">
+  <section id="adminLoginOverlay" class="admin-login-overlay">
+    <div class="admin-login-card">
+      <p class="kicker">Beveiligd beheer</p>
+      <h2>Voer het wachtwoord in</h2>
+      <p class="muted">Alleen de leiding heeft toegang tot het dashboard.</p>
+      <label for="adminPasswordInput">Wachtwoord</label>
+      <input id="adminPasswordInput" type="password" autocomplete="current-password" placeholder="Wachtwoord">
+      <button id="adminLoginBtn" class="primary">Inloggen</button>
+      <p id="adminLoginStatus" class="status"></p>
+      <a href="index.html" class="quiet-link">Terug naar deelnemersapp</a>
+    </div>
+  </section>
+
+  <main id="adminApp" class="app-shell wide hidden">
     <header class="app-header admin-header">
       <div>
         <p class="kicker">Leiding dashboard</p>
@@ -16,6 +29,14 @@
       </div>
       <a href="index.html" class="header-action">App</a>
     </header>
+
+
+    <section class="admin-card danger-zone">
+      <h2>Nieuwe dropping starten</h2>
+      <p class="muted">Zet alle groepen terug naar checkpoint 1 en wist scores, timers, live locaties, berichten en noodmeldingen. Routes en instellingen blijven behouden.</p>
+      <button id="resetEventBtn" class="danger">Reset volledige dropping</button>
+      <p id="resetEventStatus" class="status"></p>
+    </section>
 
     <section class="admin-card">
       <h2>Live kaart</h2>

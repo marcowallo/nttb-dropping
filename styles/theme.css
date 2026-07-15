@@ -30,3 +30,43 @@ button,.quiet-link{appearance:none;width:100%;border:0;border-radius:18px;paddin
 .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.status{color:var(--muted);min-height:20px}.checkpoint-block,.live-status-item,.score-row{background:rgba(255,255,255,.04);border:1px solid var(--line);border-radius:22px;padding:14px;margin:14px 0}.checkpoint-block h3,.live-status-item strong,.score-row strong{color:var(--lime)}.live-status-item,.score-row{display:grid;gap:4px}.live-status-item span,.score-row span{color:var(--muted);font-size:.92rem}.tiny{width:auto;border-radius:999px;padding:8px 10px;font-size:.78rem;margin:0}button:disabled{opacity:.4}
 .leader-map{width:100%;height:min(62vh,520px);min-height:320px;border-radius:24px;overflow:hidden;border:1px solid var(--line);background:rgba(255,255,255,.04)}.leaflet-container{font-family:inherit;background:#111A36}.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#182039;color:#F8FAFF;border:1px solid rgba(255,255,255,.10);box-shadow:0 12px 28px rgba(0,0,0,.35)}.group-map-marker{background:transparent;border:0}.group-map-marker div{width:38px;height:38px;display:grid;place-items:center;border-radius:50%;background:rgba(139,255,77,.20);border:2px solid var(--lime);box-shadow:0 0 20px rgba(139,255,77,.35);font-size:1.25rem}
 @media(max-width:700px){.app-shell{padding-left:12px;padding-right:12px}.app-header{border-radius:25px;min-height:108px}.grid2,.grid3{grid-template-columns:1fr;gap:0}.progress-meta{flex-direction:column;gap:4px}.pong-dot{width:36px;height:36px}}
+
+
+.admin-login-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 20% 0%, rgba(45,156,255,.24), transparent 28rem),
+    rgba(11,16,38,.96);
+  backdrop-filter: blur(12px);
+}
+
+.admin-login-card {
+  width: min(440px, 100%);
+  padding: 26px;
+  border-radius: 30px;
+  background: rgba(24,32,57,.96);
+  border: 1px solid var(--line);
+  box-shadow: 0 28px 80px rgba(0,0,0,.48);
+}
+
+.admin-login-card h2 {
+  color: var(--text);
+  font-size: 2rem;
+  margin-bottom: 8px;
+}
+
+.danger-zone {
+  border-color: rgba(255,77,109,.38);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(255,77,109,.13), transparent 18rem),
+    var(--panel);
+}
+
+.danger-zone h2 {
+  color: #ff8aa0;
+}

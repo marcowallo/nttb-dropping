@@ -1,5 +1,12 @@
 (() => {
   const els = {
+    adminLoginOverlay: document.getElementById("adminLoginOverlay"),
+    adminApp: document.getElementById("adminApp"),
+    adminPasswordInput: document.getElementById("adminPasswordInput"),
+    adminLoginBtn: document.getElementById("adminLoginBtn"),
+    adminLoginStatus: document.getElementById("adminLoginStatus"),
+    resetEventBtn: document.getElementById("resetEventBtn"),
+    resetEventStatus: document.getElementById("resetEventStatus"),
     leaderMap: document.getElementById("leaderMap"),
     fitMapBtn: document.getElementById("fitMapBtn"),
     liveStatusList: document.getElementById("liveStatusList"),
@@ -36,6 +43,40 @@
   let liveStatus = {};
   let map = null;
   let markers = new Map();
+
+  const ADMIN_SESSION_KEY = "dropping_admin_authenticated_v10";
+
+  function expectedPassword() {
+    return String(window.DROPPING_ADMIN_PASSWORD || "");
+  }
+
+  function unlockAdmin() {
+    sessionStorage.setItem(ADMIN_SESSION_KEY, "true");
+    els.adminLoginOverlay.classList.add("hidden");
+    els.adminApp.classList.remove("hidden");
+    setTimeout(() => {
+      if (map) map.invalidateSize();
+    }, 150);
+  }
+
+  function attemptLogin() {
+    const configured = expectedPassword();
+
+    if (!configured || configured === "verander-mij") {
+      els.adminLoginStatus.textContent = "Stel eerst een eigen wachtwoord in via firebase-config.js.";
+      return;
+    }
+
+    if (els.adminPasswordInput.value === configured) {
+      els.adminLoginStatus.textContent = "";
+      unlockAdmin();
+      init();
+    } else {
+      els.adminLoginStatus.textContent = "Onjuist wachtwoord.";
+      els.adminPasswordInput.value = "";
+      els.adminPasswordInput.focus();
+    }
+  }
 
   function groups() { return Utils.groupsArray(eventData); }
   function selectedGroup() { return selectedGroupId ? eventData.groups[selectedGroupId] : null; }
@@ -267,6 +308,29 @@
     }, () => { els.testDistanceResult.textContent = "GPS-test mislukt."; }, { enableHighAccuracy: true, timeout: 20000, maximumAge: 0 });
   }
 
+  async function resetFullEvent() {
+    const confirmed = window.confirm(
+      "Weet je zeker dat je de volledige dropping wilt resetten? Routes en instellingen blijven behouden."
+    );
+    if (!confirmed) return;
+
+    els.resetEventBtn.disabled = true;
+    els.resetEventStatus.textContent = "Dropping wordt gereset...";
+
+    try {
+      if (!Db.isEnabled()) throw new Error("Firebase is niet actief.");
+      const count = await Db.resetEvent();
+      liveStatus = {};
+      renderLive({});
+      els.resetEventStatus.textContent = `${count} groepen gereset. De dropping is klaar voor een nieuwe start.`;
+    } catch (error) {
+      console.error(error);
+      els.resetEventStatus.textContent = "Reset mislukt. Controleer Firebase en probeer opnieuw.";
+    } finally {
+      els.resetEventBtn.disabled = false;
+    }
+  }
+
   async function init() {
     initMap();
     Db.init();
@@ -277,6 +341,12 @@
     }
     render();
   }
+
+  els.adminLoginBtn.addEventListener("click", attemptLogin);
+  els.adminPasswordInput.addEventListener("keydown", event => {
+    if (event.key === "Enter") attemptLogin();
+  });
+  els.resetEventBtn.addEventListener("click", resetFullEvent);
 
   els.groupSelect.addEventListener("change", () => { readEditor(); selectedGroupId = els.groupSelect.value; render(); });
   els.addGroupBtn.addEventListener("click", addGroup);
@@ -293,5 +363,10 @@
     try { eventData = Utils.normalizeEvent(JSON.parse(els.jsonBox.value)); if (Db.isEnabled()) await Db.setFullEvent(eventData); render(); flash("Import gelukt."); }
     catch { flash("Import mislukt."); }
   });
-  init();
+  if (sessionStorage.getItem(ADMIN_SESSION_KEY) === "true") {
+    unlockAdmin();
+    init();
+  } else {
+    els.adminPasswordInput.focus();
+  }
 })();
